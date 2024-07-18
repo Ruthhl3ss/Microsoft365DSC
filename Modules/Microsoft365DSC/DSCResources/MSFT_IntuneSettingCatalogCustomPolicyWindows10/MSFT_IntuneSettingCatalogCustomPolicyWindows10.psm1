@@ -568,10 +568,10 @@ function Export-TargetResource
         Write-Verbose -Message "Exporting Intune Setting Catalog Custom Policy for Windows10 with filter $Filter"
         #region resource generator code
         [array]$getValue = Get-MgBetaDeviceManagementConfigurationPolicy -All `
-            -ErrorAction Stop | Where-Object -FilterScript { `
-                $_.Platforms -eq 'windows10' -and
-                [String]::IsNullOrWhiteSpace($_.TemplateReference.TemplateId)
-            }
+            -ErrorAction Stop #| Where-Object -FilterScript { `
+                #$_.Platforms -eq 'windows10' -and
+                #[String]::IsNullOrWhiteSpace($_.TemplateReference.TemplateId)
+            #}
         #endregion
 
         $i = 1
