@@ -1,5 +1,4 @@
-function Get-TargetResource
-{
+function Get-TargetResource {
     [CmdletBinding()]
     [OutputType([System.Collections.Hashtable])]
     param
@@ -83,18 +82,15 @@ function Get-TargetResource
     $nullResult = $PSBoundParameters
     $nullResult.Ensure = 'Absent'
 
-    try
-    {
+    try {
         #Retrieve policy general settings
         $policy = Get-MgBetaDeviceManagementIntent -Filter "displayName eq '$DisplayName'" -ErrorAction Stop | Where-Object -FilterScript { $_.TemplateId -eq '63be6324-e3c9-4c97-948a-e7f4b96f0f20' }
 
-        if(([array]$policy).count -gt 1)
-        {
+        if (([array]$policy).count -gt 1) {
             throw "A policy with a duplicated displayName {'$DisplayName'} was found - Ensure displayName is unique"
         }
 
-        if ($null -eq $policy)
-        {
+        if ($null -eq $policy) {
             Write-Verbose -Message "No Endpoint Protection Application Control Policy {$DisplayName} was found"
             return $nullResult
         }
@@ -123,15 +119,13 @@ function Get-TargetResource
 
         $returnAssignments = @()
         $graphAssignments = Get-MgBetaDeviceManagementIntentAssignment -DeviceManagementIntentId $policy.Id
-        if ($graphAssignments.count -gt 0)
-        {
+        if ($graphAssignments.count -gt 0) {
             $returnAssignments += ConvertFrom-IntunePolicyAssignment -Assignments $graphAssignments -IncludeDeviceFilter:$true
         }
         $returnHashtable.Add('Assignments', $returnAssignments)
         return $returnHashtable
     }
-    catch
-    {
+    catch {
         New-M365DSCLogEntry -Message 'Error retrieving data:' `
             -Exception $_ `
             -Source $($MyInvocation.MyCommand.Source) `
@@ -143,8 +137,7 @@ function Get-TargetResource
     }
 }
 
-function Set-TargetResource
-{
+function Set-TargetResource {
     [CmdletBinding()]
     param
     (
@@ -231,8 +224,7 @@ function Set-TargetResource
     $PSBoundParameters.Remove('CertificateThumbprint') | Out-Null
     $PSBoundParameters.Remove('ManagedIdentity') | Out-Null
     $PSBoundParameters.Remove('AccessTokens') | Out-Null
-    if ($Ensure -eq 'Present' -and $currentPolicy.Ensure -eq 'Absent')
-    {
+    if ($Ensure -eq 'Present' -and $currentPolicy.Ensure -eq 'Absent') {
         Write-Verbose -Message "Creating new Endpoint Protection Application Control Policy {$DisplayName}"
         $PSBoundParameters.Remove('DisplayName') | Out-Null
         $PSBoundParameters.Remove('Description') | Out-Null
@@ -246,16 +238,14 @@ function Set-TargetResource
 
         #region Assignments
         $assignmentsHash = ConvertTo-IntunePolicyAssignment -IncludeDeviceFilter:$true -Assignments $Assignments
-        if ($policy.id)
-        {
-            Update-DeviceConfigurationPolicyAssignment -DeviceConfigurationPolicyId  $policy.id `
+        if ($policy.id) {
+            Update-DeviceConfigurationPolicyAssignment -DeviceConfigurationPolicyId $policy.id `
                 -Targets $assignmentsHash `
                 -Repository 'deviceManagement/intents'
         }
         #endregion
     }
-    elseif ($Ensure -eq 'Present' -and $currentPolicy.Ensure -eq 'Present')
-    {
+    elseif ($Ensure -eq 'Present' -and $currentPolicy.Ensure -eq 'Present') {
         Write-Verbose -Message "Updating existing Endpoint Protection Application Control Policy {$DisplayName}"
         $appControlPolicy = Get-MgBetaDeviceManagementIntent `
             -ErrorAction Stop | Where-Object `
@@ -272,8 +262,7 @@ function Set-TargetResource
             -DeviceManagementIntentId $appControlPolicy.Id
 
         $currentSettings = Get-MgBetaDeviceManagementIntentSetting -DeviceManagementIntentId $appControlPolicy.Id -ErrorAction Stop
-        foreach ($setting in $Settings)
-        {
+        foreach ($setting in $Settings) {
             $s = $currentSettings | Where-Object { $_.DefinitionId -eq $setting.DefinitionId }
 
             Update-MgBetaDeviceManagementIntentSetting -ErrorAction Stop `
@@ -285,25 +274,24 @@ function Set-TargetResource
 
         #region Assignments
         $assignmentsHash = ConvertTo-IntunePolicyAssignment -IncludeDeviceFilter:$true -Assignments $Assignments
-        Update-DeviceConfigurationPolicyAssignment -DeviceConfigurationPolicyId  $appControlPolicy.id `
+        Update-DeviceConfigurationPolicyAssignment -DeviceConfigurationPolicyId $appControlPolicy.id `
             -Targets $assignmentsHash `
             -Repository 'deviceManagement/intents'
         #endregion
     }
-    elseif ($Ensure -eq 'Absent' -and $currentPolicy.Ensure -eq 'Present')
-    {
+    elseif ($Ensure -eq 'Absent' -and $currentPolicy.Ensure -eq 'Present') {
         Write-Verbose -Message "Removing Endpoint Protection Application Control Policy {$DisplayName}"
         $appControlPolicy = Get-MgBetaDeviceManagementIntent `
             -ErrorAction Stop | Where-Object `
             -FilterScript { $_.TemplateId -eq '63be6324-e3c9-4c97-948a-e7f4b96f0f20' -and `
                 $_.displayName -eq $($DisplayName) }
+        
 
         Remove-MgBetaDeviceManagementIntent -DeviceManagementIntentId $appControlPolicy.Id -ErrorAction Stop
     }
 }
 
-function Test-TargetResource
-{
+function Test-TargetResource {
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     param
@@ -380,8 +368,7 @@ function Test-TargetResource
     Write-Verbose -Message "Testing configuration of Endpoint Protection Application Control Policy {$DisplayName}"
 
     $CurrentValues = Get-TargetResource @PSBoundParameters
-    if (-not (Test-M365DSCAuthenticationParameter -BoundParameters $CurrentValues))
-    {
+    if (-not (Test-M365DSCAuthenticationParameter -BoundParameters $CurrentValues)) {
         Write-Verbose "An error occured in Get-TargetResource, the policy {$displayName} will not be processed"
         throw "An error occured in Get-TargetResource, the policy {$displayName} will not be processed. Refer to the event viewer logs for more information."
     }
@@ -391,13 +378,11 @@ function Test-TargetResource
     $ValuesToCheck = ([hashtable]$PSBoundParameters).clone()
 
     $testResult = $true
-    if ($CurrentValues.Ensure -ne $Ensure)
-    {
+    if ($CurrentValues.Ensure -ne $Ensure) {
         $testResult = $false
     }
     #region Assignments
-    if ($TestResult)
-    {
+    if ($TestResult) {
         $source = Get-M365DSCDRGComplexTypeToHashtable -ComplexObject $PSBoundParameters.Assignments
         $target = $CurrentValues.Assignments
         $testResult = Compare-M365DSCIntunePolicyAssignment -Source $source -Target $target
@@ -405,8 +390,7 @@ function Test-TargetResource
     }
     #endregion
 
-    if ($TestResult)
-    {
+    if ($TestResult) {
         $TestResult = Test-M365DSCParameterState -CurrentValues $CurrentValues `
             -Source $($MyInvocation.MyCommand.Source) `
             -DesiredValues $PSBoundParameters `
@@ -418,8 +402,7 @@ function Test-TargetResource
     return $TestResult
 }
 
-function Export-TargetResource
-{
+function Export-TargetResource {
     [CmdletBinding()]
     [OutputType([System.String])]
     param
@@ -475,23 +458,19 @@ function Export-TargetResource
     $dscContent = ''
     $i = 1
 
-    try
-    {
+    try {
         $policyTemplateID = '63be6324-e3c9-4c97-948a-e7f4b96f0f20'
         [array]$policies = Get-MgBetaDeviceManagementIntent -All:$true -Filter $Filter `
             -ErrorAction Stop | Where-Object -FilterScript { $_.TemplateId -eq $policyTemplateID }
-        if ($policies.Length -eq 0)
-        {
+
+        if ($policies.Length -eq 0) {
             Write-Host $Global:M365DSCEmojiGreenCheckMark
         }
-        else
-        {
+        else {
             Write-Host "`r`n" -NoNewline
         }
-        foreach ($policy in $policies)
-        {
-            if ($null -ne $Global:M365DSCExportResourceInstancesCount)
-            {
+        foreach ($policy in $policies) {
+            if ($null -ne $Global:M365DSCExportResourceInstancesCount) {
                 $Global:M365DSCExportResourceInstancesCount++
             }
 
@@ -510,22 +489,18 @@ function Export-TargetResource
             }
 
             $Results = Get-TargetResource @params
-            if (-not (Test-M365DSCAuthenticationParameter -BoundParameters $Results))
-            {
+            if (-not (Test-M365DSCAuthenticationParameter -BoundParameters $Results)) {
                 Write-Verbose "An error occured in Get-TargetResource, the policy {$($params.displayName)} will not be processed"
                 throw "An error occured in Get-TargetResource, the policy {$($params.displayName)} will not be processed. Refer to the event viewer logs for more information."
             }
-            if ($Results.Assignments)
-            {
+            if ($Results.Assignments) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject ([Array]$Results.Assignments) -CIMInstanceName DeviceManagementConfigurationPolicyAssignments
 
 
-                if ($complexTypeStringResult)
-                {
+                if ($complexTypeStringResult) {
                     $Results.Assignments = $complexTypeStringResult
                 }
-                else
-                {
+                else {
                     $Results.Remove('Assignments') | Out-Null
                 }
             }
@@ -538,8 +513,7 @@ function Export-TargetResource
                 -Results $Results `
                 -Credential $Credential
 
-            if ($Results.Assignments)
-            {
+            if ($Results.Assignments) {
                 $currentDSCBlock = Convert-DSCStringParamToVariable -DSCBlock $currentDSCBlock -ParameterName 'Assignments' -IsCIMArray:$true
             }
 
@@ -552,16 +526,13 @@ function Export-TargetResource
         }
         return $dscContent
     }
-    catch
-    {
+    catch {
         if ($_.Exception -like '*401*' -or $_.ErrorDetails.Message -like "*`"ErrorCode`":`"Forbidden`"*" -or `
-            $_.Exception -like "*Unable to perform redirect as Location Header is not set in response*" -or `
-            $_.Exception -like "*Request not applicable to target tenant*")
-        {
+                $_.Exception -like "*Unable to perform redirect as Location Header is not set in response*" -or `
+                $_.Exception -like "*Request not applicable to target tenant*") {
             Write-Host "`r`n    $($Global:M365DSCEmojiYellowCircle) The current tenant is not registered for Intune."
         }
-        else
-        {
+        else {
             Write-Host $Global:M365DSCEmojiRedX
 
             New-M365DSCLogEntry -Message 'Error during Export:' `
@@ -575,8 +546,7 @@ function Export-TargetResource
     }
 }
 
-function Get-M365DSCIntuneEndpointProtectionPolicyWindowsSettings
-{
+function Get-M365DSCIntuneEndpointProtectionPolicyWindowsSettings {
     [CmdletBinding()]
     [OutputType([System.Collections.Hashtable])]
     param(
@@ -586,28 +556,21 @@ function Get-M365DSCIntuneEndpointProtectionPolicyWindowsSettings
     )
 
     $results = @()
-    foreach ($property in $properties.Keys)
-    {
-        if ($property -ne 'Verbose')
-        {
+    foreach ($property in $properties.Keys) {
+        if ($property -ne 'Verbose') {
             $setting = @{}
             $settingType = ($properties.$property.gettype()).name
-            switch ($settingType)
-            {
-                'String'
-                {
+            switch ($settingType) {
+                'String' {
                     $setting.Add('@odata.type', '#microsoft.graph.deviceManagementStringSettingInstance')
                 }
-                'Boolean'
-                {
+                'Boolean' {
                     $setting.Add('@odata.type', '#microsoft.graph.deviceManagementBooleanSettingInstance')
                 }
-                'Int32'
-                {
+                'Int32' {
                     $setting.Add('@odata.type', '#microsoft.graph.deviceManagementIntegerSettingInstance')
                 }
-                Default
-                {
+                Default {
                     $setting.Add('@odata.type', '#microsoft.graph.deviceManagementComplexSettingInstance')
                 }
             }
