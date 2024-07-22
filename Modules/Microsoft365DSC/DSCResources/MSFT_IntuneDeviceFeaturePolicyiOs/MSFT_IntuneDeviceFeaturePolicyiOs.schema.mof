@@ -9,6 +9,13 @@ class MSFT_DeviceManagementConfigurationPolicyAssignments
     [Write, Description("The collection Id that is the target of the assignment.(ConfigMgr)")] String collectionId;
 };
 
+[ClassVersion("1.0.0.0")]
+class MSFT_MicrosoftGraphDeviceFeatureairPrintDestinations
+{
+    [Write, Description ("")] string ipAddress;
+    [Write, Description ("")] string resourcePath;
+    [Write, Description ("")] Boolean forceTls;
+}
 
 [ClassVersion("1.0.0.0"), FriendlyName("IntuneDeviceFeaturePolicyiOs")]
 class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
@@ -20,7 +27,7 @@ class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
     [Write, Description("")] Int32 homeScreenGridWidth;
     [Write, Description("")] Int32 homeScreenGridHeight;
     [Write, Description("Choose a location on devices that shows the image.")] String wallpaperDisplayLocation;
-    [Write, Description("Add AirPrint Destination (Be sure to add all printers to the same profile. Apple prevents multiple AirPrint profiles from targeting the same device.)")] Object airPrintDestinations;
+    [Write, Description("Add AirPrint Destination (Be sure to add all printers to the same profile. Apple prevents multiple AirPrint profiles from targeting the same device.)"), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeatureairPrintDestinations")] String airPrintDestinations;
     [Write, Description("Add up to four (4) items for iPhones, and up to six (6) items for iPads (apps and folders combined) to the dock on the screen.")] String homeScreenDockIcons;
     [Write, Description("Use this feature to add apps. And, see how these apps look on pages, the dock, and within folders.")] String homeScreenPages;
     [Write, Description("Represents the assignment to the Intune policy."), EmbeddedInstance("MSFT_DeviceManagementConfigurationPolicyAssignments")] String Assignments[];
