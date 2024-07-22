@@ -1,4 +1,5 @@
-function Get-TargetResource {
+function Get-TargetResource
+{
     [CmdletBinding()]
     [OutputType([System.Collections.Hashtable])]
     param
@@ -73,15 +74,21 @@ function Get-TargetResource {
         $AccessTokens
     )
 
-    Write-Verbose -Message "Checking for the Intune Device Feature iOS Policy {$DisplayName}"
-    $ConnectionMode = New-M365DSCConnection -Workload 'MicrosoftGraph' `
-        -InboundParameters $PSBoundParameters
+    try
+    {
+        $ConnectionMode = New-M365DSCConnection -Workload 'MicrosoftGraph' `
+            -InboundParameters $PSBoundParameters
+    }
+    catch
+    {
+        Write-Verbose -Message 'Connection to the workload failed.'
+    }
 
     #Ensure the proper dependencies are installed in the current environment.
     Confirm-M365DSCDependencies
 
     #region Telemetry
-    $ResourceName = $MyInvocation.MyCommand.ModuleName -replace 'MSFT_', ''
+    $ResourceName = $MyInvocation.MyCommand.ModuleName.Replace('MSFT_', '')
     $CommandName = $MyInvocation.MyCommand
     $data = Format-M365DSCTelemetryParameters -ResourceName $ResourceName `
         -CommandName $CommandName `
@@ -91,20 +98,27 @@ function Get-TargetResource {
 
     $nullResult = $PSBoundParameters
     $nullResult.Ensure = 'Absent'
-    try {
-        $devicePolicy = Get-MgBetaDeviceManagementDeviceConfiguration `
-            -ErrorAction SilentlyContinue | Where-Object `
-            -FilterScript { $_.AdditionalProperties.'@odata.type' -eq '#microsoft.graph.iosDeviceFeaturesConfiguration' -and `
-                $_.displayName -eq $($DisplayName) }
-        if (([array]$devicePolicy).count -gt 1) {
-            throw "A policy with a duplicated displayName {'$DisplayName'} was found - Ensure displayName is unique"
+    try
+    {
+        $getValue = Get-MgBetaDeviceManagementDeviceConfiguration -DeviceConfigurationId $id -ErrorAction SilentlyContinue
+
+        #region resource generator code
+        if ($null -eq $getValue)
+        {
+            $getValue = Get-MgBetaDeviceManagementDeviceConfiguration -Filter "DisplayName eq '$Displayname'" -ErrorAction SilentlyContinue | Where-Object `
+            -FilterScript { `
+                $_.AdditionalProperties.'@odata.type' -eq '#microsoft.graph.iosDeviceFeaturesConfiguration' `
+            }
         }
-        if ($null -eq $devicePolicy) {
-            Write-Verbose -Message "No iOS Device Device Feature Policy with displayName {$DisplayName} was found"
+        #endregion
+
+        if ($null -eq $getValue)
+        {
+            Write-Verbose -Message "Nothing with id {$id} was found"
             return $nullResult
         }
 
-        Write-Verbose -Message "Found iOS Device Device Feature Policy with displayName {$DisplayName}"
+        Write-Verbose -Message "Found something with id {$id}"
         $results = @{
             Id                                            = $devicePolicy.id
             DisplayName                                   = $devicePolicy.DisplayName
@@ -124,25 +138,26 @@ function Get-TargetResource {
             AccessTokens                                  = $AccessTokens
         }
 
-        $returnAssignments = @()
-        $graphAssignments = Get-MgBetaDeviceManagementDeviceConfigurationAssignment -DeviceConfigurationId $devicePolicy.id
-        if ($graphAssignments.count -gt 0) {
-            $returnAssignments += ConvertFrom-IntunePolicyAssignment `
-                -IncludeDeviceFilter:$true `
-                -Assignments ($graphAssignments)
+        $assignmentsValues = Get-MgBetaDeviceManagementDeviceConfigurationAssignment -DeviceConfigurationId $Id
+        $assignmentResult = @()
+        if ($assignmentsValues.Count -gt 0)
+        {
+            $assignmentResult += ConvertFrom-IntunePolicyAssignment `
+                                -IncludeDeviceFilter:$true `
+                                -Assignments ($assignmentsValues)
         }
-        $results.Add('Assignments', $returnAssignments)
+        $results.Add('Assignments', $assignmentResult)
 
         return [System.Collections.Hashtable] $results
     }
-    catch {
+    catch
+    {
         New-M365DSCLogEntry -Message 'Error retrieving data:' `
             -Exception $_ `
             -Source $($MyInvocation.MyCommand.Source) `
             -TenantId $TenantId `
             -Credential $Credential
 
-        $nullResult = Clear-M365DSCAuthenticationParameter -BoundParameters $nullResult
         return $nullResult
     }
 }
