@@ -12,9 +12,9 @@ class MSFT_DeviceManagementConfigurationPolicyAssignments
 [ClassVersion("1.0.0.0")]
 class MSFT_MicrosoftGraphDeviceFeatureairPrintDestinations
 {
-    [Write, Description ("")] string ipAddress;
-    [Write, Description ("")] string resourcePath;
-    [Write, Description ("")] Boolean forceTls;
+    [Write, Description ("Enter the IPv4 or IPv6 address of the printer")] string ipAddress;
+    [Write, Description ("The path is typically ipp/print for printers on your network")] string resourcePath;
+    [Write, Description ("(default) doesn't secure AirPrint connections with TLS. Enable secures AirPrint connections with Transport Layer Security (TLS).")] Boolean forceTls;
 }
 
 [ClassVersion("1.0.0.0"), FriendlyName("IntuneDeviceFeaturePolicyiOs")]
