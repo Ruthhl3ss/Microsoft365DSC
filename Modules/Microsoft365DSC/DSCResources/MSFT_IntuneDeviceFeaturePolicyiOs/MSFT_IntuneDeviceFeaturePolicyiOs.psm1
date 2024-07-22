@@ -683,7 +683,7 @@ function Export-TargetResource {
                 }
             }
 
-            If (Results.airPrintDestinations) {
+            If ($Results.airPrintDestinations) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.airPrintDestinations -CIMInstanceName AirPrintDestination
                 if ($complexTypeStringResult) {
                     $Results.airPrintDestinations = $complexTypeStringResult
