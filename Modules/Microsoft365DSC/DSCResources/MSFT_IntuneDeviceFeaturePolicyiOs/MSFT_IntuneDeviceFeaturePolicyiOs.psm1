@@ -590,7 +590,7 @@ function Export-TargetResource
         [array]$getValue = Get-MgBetaDeviceManagementDeviceConfiguration -Filter $Filter -All `
             -ErrorAction Stop | Where-Object `
             -FilterScript { `
-                $_.AdditionalProperties.'@odata.type' -eq '#microsoft.graph.iosWiFiConfiguration'  `
+                $_.AdditionalProperties.'@odata.type' -eq '#microsoft.graph.iosDeviceFeaturesConfiguration'  `
         }
         #endregion
 
@@ -699,20 +699,14 @@ function Get-M365DSCAdditionalProperties
     )
 
     $additionalProperties = @(
-        'ConnectAutomatically'
-        'ConnectWhenNetworkNameIsHidden'
-        'DisableMacAddressRandomization'
-        'NetworkName'
-        'PreSharedKey'
-        'ProxyAutomaticConfigurationUrl'
-        'ProxyManualAddress'
-        'ProxyManualPort'
-        'ProxySettings'
-        'Ssid'
-        'WiFiSecurityType'
+        'lockScreenFootnote'
+        'wallpaperDisplayLocation'
+        'airPrintDestinations'
+        'homeScreenDockIcons'
+        'homeScreenPages'
     )
 
-    $results = @{'@odata.type' = '#microsoft.graph.iosWiFiConfiguration' }
+    $results = @{'@odata.type' = '#microsoft.graph.iosDeviceFeaturesConfiguration' }
     $cloneProperties = $Properties.clone()
     foreach ($property in $cloneProperties.Keys)
     {
