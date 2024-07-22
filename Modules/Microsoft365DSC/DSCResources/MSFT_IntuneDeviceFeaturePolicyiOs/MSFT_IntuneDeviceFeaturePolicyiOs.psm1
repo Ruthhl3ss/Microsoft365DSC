@@ -36,23 +36,23 @@ function Get-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstanceg]
         $contentFilterSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenPages,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $notificationSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $wallpaperImage,
 
         [Parameter()]
@@ -141,6 +141,11 @@ function Get-TargetResource {
         $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
 
+        $contentFilterSettingscomplex = @{}
+        $contentFilterSettingscomplex.Add('@odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type')
+        $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
+        $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
+
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
             Id                       = $getValue.id
@@ -151,7 +156,7 @@ function Get-TargetResource {
             homeScreenGridHeight     = $getValue.AdditionalProperties.homeScreenGridHeight
             wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
             airPrintDestinations     = $airPrintDestinationscomplex
-            contentFilterSettings    = $getValue.AdditionalProperties.contentFilterSettings
+            contentFilterSettings    = $contentFilterSettingscomplex
             homeScreenDockIcons      = $getValue.AdditionalProperties.homeScreenDockIcons
             homeScreenPages          = $getValue.AdditionalProperties.homeScreenPages
             notificationSettings     = $getValue.AdditionalProperties.notificationSettings
@@ -226,23 +231,23 @@ function Set-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstanceg]
         $contentFilterSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenPages,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $notificationSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $wallpaperImage,
 
         [Parameter()]
@@ -438,23 +443,23 @@ function Test-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstanceg]
         $contentFilterSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenPages,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $notificationSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $wallpaperImage,
 
         [Parameter()]
@@ -673,6 +678,24 @@ function Export-TargetResource {
             $Results = Update-M365DSCExportAuthenticationResults -ConnectionMode $ConnectionMode `
                 -Results $Results
 
+            $ComplexItems = @(
+                'Assignments'
+                'airPrintDestinations'
+                'contentFilterSettings'
+            )
+
+            foreach ($item in $ComplexItems){
+                if ($Results.$($item)) {
+                    $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.Assignments -CIMInstanceName DeviceManagementConfigurationPolicyAssignments
+                    if ($complexTypeStringResult) {
+                        $Results.$($item) = $complexTypeStringResult
+                    }
+                    else {
+                        $Results.Remove($($item)) | Out-Null
+                    }
+                }
+            }
+            <#
             if ($Results.Assignments) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.Assignments -CIMInstanceName DeviceManagementConfigurationPolicyAssignments
                 if ($complexTypeStringResult) {
@@ -692,6 +715,7 @@ function Export-TargetResource {
                     $Results.Remove('airPrintDestinations') | Out-Null
                 }
             }
+            #>
 
             $currentDSCBlock = Get-M365DSCExportContentForResource -ResourceName $ResourceName `
                 -ConnectionMode $ConnectionMode `
