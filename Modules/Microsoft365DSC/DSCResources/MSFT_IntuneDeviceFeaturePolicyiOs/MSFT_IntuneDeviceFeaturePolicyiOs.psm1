@@ -683,6 +683,16 @@ function Export-TargetResource {
                 }
             }
 
+            If (Results.airPrintDestinations) {
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.airPrintDestinations -CIMInstanceName AirPrintDestination
+                if ($complexTypeStringResult) {
+                    $Results.airPrintDestinations = $complexTypeStringResult
+                }
+                else {
+                    $Results.Remove('airPrintDestinations') | Out-Null
+                }
+            }
+
             $currentDSCBlock = Get-M365DSCExportContentForResource -ResourceName $ResourceName `
                 -ConnectionMode $ConnectionMode `
                 -ModulePath $PSScriptRoot `
