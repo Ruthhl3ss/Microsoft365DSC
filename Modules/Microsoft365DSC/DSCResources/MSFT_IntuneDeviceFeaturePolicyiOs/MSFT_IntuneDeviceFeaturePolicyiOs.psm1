@@ -1,5 +1,4 @@
-function Get-TargetResource
-{
+function Get-TargetResource {
     [CmdletBinding()]
     [OutputType([System.Collections.Hashtable])]
     param
@@ -22,6 +21,14 @@ function Get-TargetResource
 
         [Parameter()]
         [System.String]
+        $homeScreenGridWidth,
+
+        [Parameter()]
+        [System.String]
+        $homeScreenGridHeight,
+
+        [Parameter()]
+        [System.String]
         $wallpaperDisplayLocation,
 
         [Parameter()]
@@ -30,11 +37,27 @@ function Get-TargetResource
 
         [Parameter()]
         [System.String]
+        $contentFilterSettings,
+
+        [Parameter()]
+        [System.String]
         $homeScreenDockIcons,
 
         [Parameter()]
         [System.String]
         $homeScreenPages,
+
+        [Parameter()]
+        [System.String]
+        $notificationSettings,
+
+        [Parameter()]
+        [System.String]
+        $wallpaperImage,
+
+        [Parameter()]
+        [System.String]
+        $iosSingleSignOnExtension,
 
         [Parameter()]
         [Microsoft.Management.Infrastructure.CimInstance[]]
@@ -74,13 +97,11 @@ function Get-TargetResource
         $AccessTokens
     )
 
-    try
-    {
+    try {
         $ConnectionMode = New-M365DSCConnection -Workload 'MicrosoftGraph' `
             -InboundParameters $PSBoundParameters
     }
-    catch
-    {
+    catch {
         Write-Verbose -Message 'Connection to the workload failed.'
     }
 
@@ -98,60 +119,61 @@ function Get-TargetResource
 
     $nullResult = $PSBoundParameters
     $nullResult.Ensure = 'Absent'
-    try
-    {
+    try {
         $getValue = Get-MgBetaDeviceManagementDeviceConfiguration -DeviceConfigurationId $id -ErrorAction SilentlyContinue
 
         #region resource generator code
-        if ($null -eq $getValue)
-        {
+        if ($null -eq $getValue) {
             $getValue = Get-MgBetaDeviceManagementDeviceConfiguration -Filter "DisplayName eq '$Displayname'" -ErrorAction SilentlyContinue | Where-Object `
-            -FilterScript { `
-                $_.AdditionalProperties.'@odata.type' -eq '#microsoft.graph.iosDeviceFeaturesConfiguration' `
+                -FilterScript { `
+                    $_.AdditionalProperties.'@odata.type' -eq '#microsoft.graph.iosDeviceFeaturesConfiguration' `
             }
         }
         #endregion
 
-        if ($null -eq $getValue)
-        {
+        if ($null -eq $getValue) {
             Write-Verbose -Message "Nothing with id {$id} was found"
             return $nullResult
         }
 
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
-            Id                                            = $getValue.id
-            DisplayName                                   = $getValue.DisplayName
-            Description                                   = $getValue.Description
-            lockScreenFootnote                            = $getValue.AdditionalProperties.lockScreenFootnote
-            wallpaperDisplayLocation                      = $getValue.AdditionalProperties.wallpaperDisplayLocation
-            airPrintDestinations                          = $getValue.AdditionalProperties.airPrintDestinations
-            homeScreenDockIcons                           = $getValue.AdditionalProperties.homeScreenDockIcons
-            homeScreenPages                               = $getValue.AdditionalProperties.homeScreenPages
-            Ensure                                        = 'Present'
-            Credential                                    = $Credential
-            ApplicationId                                 = $ApplicationId
-            TenantId                                      = $TenantId
-            ApplicationSecret                             = $ApplicationSecret
-            CertificateThumbprint                         = $CertificateThumbprint
-            Managedidentity                               = $ManagedIdentity.IsPresent
-            AccessTokens                                  = $AccessTokens
+            Id                       = $getValue.id
+            DisplayName              = $getValue.DisplayName
+            Description              = $getValue.Description
+            lockScreenFootnote       = $getValue.AdditionalProperties.lockScreenFootnote
+            homeScreenGridWidth      = $getValue.AdditionalProperties.homeScreenGridWidth
+            homeScreenGridHeight     = $getValue.AdditionalProperties.homeScreenGridHeight
+            wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
+            airPrintDestinations     = $getValue.AdditionalProperties.airPrintDestinations
+            contentFilterSettings    = $getValue.AdditionalProperties.contentFilterSettings
+            homeScreenDockIcons      = $getValue.AdditionalProperties.homeScreenDockIcons
+            homeScreenPages          = $getValue.AdditionalProperties.homeScreenPages
+            notificationSettings     = $getValue.AdditionalProperties.notificationSettings
+            wallpaperImage           = $getValue.AdditionalProperties.wallpaperImage
+            iosSingleSignOnExtension = $getValue.AdditionalProperties.iosSingleSignOnExtension
+            Ensure                   = 'Present'
+            Credential               = $Credential
+            ApplicationId            = $ApplicationId
+            TenantId                 = $TenantId
+            ApplicationSecret        = $ApplicationSecret
+            CertificateThumbprint    = $CertificateThumbprint
+            Managedidentity          = $ManagedIdentity.IsPresent
+            AccessTokens             = $AccessTokens
         }
 
         $assignmentsValues = Get-MgBetaDeviceManagementDeviceConfigurationAssignment -DeviceConfigurationId $getValue.Id
         $assignmentResult = @()
-        if ($assignmentsValues.Count -gt 0)
-        {
+        if ($assignmentsValues.Count -gt 0) {
             $assignmentResult += ConvertFrom-IntunePolicyAssignment `
-                                -IncludeDeviceFilter:$true `
-                                -Assignments ($assignmentsValues)
+                -IncludeDeviceFilter:$true `
+                -Assignments ($assignmentsValues)
         }
         $results.Add('Assignments', $assignmentResult)
 
         return [System.Collections.Hashtable] $results
     }
-    catch
-    {
+    catch {
         New-M365DSCLogEntry -Message 'Error retrieving data:' `
             -Exception $_ `
             -Source $($MyInvocation.MyCommand.Source) `
@@ -184,6 +206,14 @@ function Set-TargetResource {
 
         [Parameter()]
         [System.String]
+        $homeScreenGridWidth,
+
+        [Parameter()]
+        [System.String]
+        $homeScreenGridHeight,
+
+        [Parameter()]
+        [System.String]
         $wallpaperDisplayLocation,
 
         [Parameter()]
@@ -192,11 +222,27 @@ function Set-TargetResource {
 
         [Parameter()]
         [System.String]
+        $contentFilterSettings,
+
+        [Parameter()]
+        [System.String]
         $homeScreenDockIcons,
 
         [Parameter()]
         [System.String]
         $homeScreenPages,
+
+        [Parameter()]
+        [System.String]
+        $notificationSettings,
+
+        [Parameter()]
+        [System.String]
+        $wallpaperImage,
+
+        [Parameter()]
+        [System.String]
+        $iosSingleSignOnExtension,
 
         [Parameter()]
         [Microsoft.Management.Infrastructure.CimInstance[]]
@@ -265,8 +311,7 @@ function Set-TargetResource {
     $PSBoundParameters.Remove('AccessTokens') | Out-Null
 
 
-    if ($Ensure -eq 'Present' -and $currentInstance.Ensure -eq 'Absent')
-    {
+    if ($Ensure -eq 'Present' -and $currentInstance.Ensure -eq 'Absent') {
         Write-Verbose -Message "Creating {$DisplayName}"
         $PSBoundParameters.Remove('Assignments') | Out-Null
 
@@ -274,10 +319,8 @@ function Set-TargetResource {
         $CreateParameters = Rename-M365DSCCimInstanceParameter -Properties $CreateParameters
 
         $AdditionalProperties = Get-M365DSCAdditionalProperties -Properties ($CreateParameters)
-        foreach ($key in $AdditionalProperties.keys)
-        {
-            if ($key -ne '@odata.type')
-            {
+        foreach ($key in $AdditionalProperties.keys) {
+            if ($key -ne '@odata.type') {
                 $keyName = $key.substring(0, 1).ToUpper() + $key.substring(1, $key.length - 1)
                 $CreateParameters.remove($keyName)
             }
@@ -286,16 +329,13 @@ function Set-TargetResource {
         $CreateParameters.Remove('Id') | Out-Null
         $CreateParameters.Remove('Verbose') | Out-Null
 
-        foreach ($key in ($CreateParameters.clone()).Keys)
-        {
-            if ($CreateParameters[$key].getType().Fullname -like '*CimInstance*')
-            {
+        foreach ($key in ($CreateParameters.clone()).Keys) {
+            if ($CreateParameters[$key].getType().Fullname -like '*CimInstance*') {
                 $CreateParameters[$key] = Convert-M365DSCDRGComplexTypeToHashtable -ComplexObject $CreateParameters[$key]
             }
         }
 
-        if ($AdditionalProperties)
-        {
+        if ($AdditionalProperties) {
             $CreateParameters.add('AdditionalProperties', $AdditionalProperties)
         }
 
@@ -303,16 +343,14 @@ function Set-TargetResource {
         $policy = New-MgBetaDeviceManagementDeviceConfiguration @CreateParameters
         $assignmentsHash = ConvertTo-IntunePolicyAssignment -IncludeDeviceFilter:$true -Assignments $Assignments
 
-        if ($policy.id)
-        {
+        if ($policy.id) {
             Update-DeviceConfigurationPolicyAssignment -DeviceConfigurationPolicyId $policy.id `
                 -Targets $assignmentsHash `
                 -Repository 'deviceManagement/deviceConfigurations'
         }
         #endregion
     }
-    elseif ($Ensure -eq 'Present' -and $currentInstance.Ensure -eq 'Present')
-    {
+    elseif ($Ensure -eq 'Present' -and $currentInstance.Ensure -eq 'Present') {
         Write-Verbose -Message "Updating {$DisplayName}"
         $PSBoundParameters.Remove('Assignments') | Out-Null
 
@@ -320,10 +358,8 @@ function Set-TargetResource {
         $UpdateParameters = Rename-M365DSCCimInstanceParameter -Properties $UpdateParameters
 
         $AdditionalProperties = Get-M365DSCAdditionalProperties -Properties ($UpdateParameters)
-        foreach ($key in $AdditionalProperties.keys)
-        {
-            if ($key -ne '@odata.type')
-            {
+        foreach ($key in $AdditionalProperties.keys) {
+            if ($key -ne '@odata.type') {
                 $keyName = $key.substring(0, 1).ToUpper() + $key.substring(1, $key.length - 1)
                 $UpdateParameters.remove($keyName)
             }
@@ -332,16 +368,13 @@ function Set-TargetResource {
         $UpdateParameters.Remove('Id') | Out-Null
         $UpdateParameters.Remove('Verbose') | Out-Null
 
-        foreach ($key in ($UpdateParameters.clone()).Keys)
-        {
-            if ($UpdateParameters[$key].getType().Fullname -like '*CimInstance*')
-            {
+        foreach ($key in ($UpdateParameters.clone()).Keys) {
+            if ($UpdateParameters[$key].getType().Fullname -like '*CimInstance*') {
                 $UpdateParameters[$key] = Convert-M365DSCDRGComplexTypeToHashtable -ComplexObject $UpdateParameters[$key]
             }
         }
 
-        if ($AdditionalProperties)
-        {
+        if ($AdditionalProperties) {
             $UpdateParameters.add('AdditionalProperties', $AdditionalProperties)
         }
 
@@ -354,8 +387,7 @@ function Set-TargetResource {
             -Repository 'deviceManagement/deviceConfigurations'
         #endregion
     }
-    elseif ($Ensure -eq 'Absent' -and $currentInstance.Ensure -eq 'Present')
-    {
+    elseif ($Ensure -eq 'Absent' -and $currentInstance.Ensure -eq 'Present') {
         Write-Verbose -Message "Removing {$DisplayName}"
         #region resource generator code
         Remove-MgBetaDeviceManagementDeviceConfiguration -DeviceConfigurationId $currentInstance.Id
@@ -363,8 +395,7 @@ function Set-TargetResource {
     }
 }
 
-function Test-TargetResource
-{
+function Test-TargetResource {
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     param
@@ -387,6 +418,14 @@ function Test-TargetResource
 
         [Parameter()]
         [System.String]
+        $homeScreenGridWidth,
+
+        [Parameter()]
+        [System.String]
+        $homeScreenGridHeight,
+
+        [Parameter()]
+        [System.String]
         $wallpaperDisplayLocation,
 
         [Parameter()]
@@ -395,11 +434,27 @@ function Test-TargetResource
 
         [Parameter()]
         [System.String]
+        $contentFilterSettings,
+
+        [Parameter()]
+        [System.String]
         $homeScreenDockIcons,
 
         [Parameter()]
         [System.String]
         $homeScreenPages,
+
+        [Parameter()]
+        [System.String]
+        $notificationSettings,
+
+        [Parameter()]
+        [System.String]
+        $wallpaperImage,
+
+        [Parameter()]
+        [System.String]
+        $iosSingleSignOnExtension,
 
         [Parameter()]
         [Microsoft.Management.Infrastructure.CimInstance[]]
@@ -457,43 +512,36 @@ function Test-TargetResource
     $CurrentValues = Get-TargetResource @PSBoundParameters
     $ValuesToCheck = ([Hashtable]$PSBoundParameters).clone()
 
-    if ($CurrentValues.Ensure -ne $Ensure)
-    {
+    if ($CurrentValues.Ensure -ne $Ensure) {
         Write-Verbose -Message "Test-TargetResource returned $false"
         return $false
     }
     $testResult = $true
 
-    foreach ($key in $PSBoundParameters.Keys)
-    {
-        if ($PSBoundParameters[$key].getType().Name -like '*CimInstance*')
-        {
+    foreach ($key in $PSBoundParameters.Keys) {
+        if ($PSBoundParameters[$key].getType().Name -like '*CimInstance*') {
             $CIMArraySource = @()
             $CIMArrayTarget = @()
             $CIMArraySource += $PSBoundParameters[$key]
             $CIMArrayTarget += $CurrentValues.$key
-            if ($CIMArraySource.count -ne $CIMArrayTarget.count)
-            {
+            if ($CIMArraySource.count -ne $CIMArrayTarget.count) {
                 Write-Verbose -Message "Configuration drift:Number of items does not match: Source=$($CIMArraySource.count) Target=$($CIMArrayTarget.count)"
                 $testResult = $false
                 break
             }
             $i = 0
-            foreach ($item in $CIMArraySource )
-            {
+            foreach ($item in $CIMArraySource ) {
                 $testResult = Compare-M365DSCComplexObject `
                     -Source (Get-M365DSCDRGComplexTypeToHashtable -ComplexObject $CIMArraySource[$i]) `
                     -Target ($CIMArrayTarget[$i])
 
                 $i++
-                if (-Not $testResult)
-                {
+                if (-Not $testResult) {
                     $testResult = $false
                     break
                 }
             }
-            if (-Not $testResult)
-            {
+            if (-Not $testResult) {
                 $testResult = $false
                 break
             }
@@ -507,17 +555,14 @@ function Test-TargetResource
     Write-Verbose -Message "Target Values: $(Convert-M365DscHashtableToString -Hashtable $ValuesToCheck)"
 
     #Convert any DateTime to String
-    foreach ($key in $ValuesToCheck.Keys)
-    {
+    foreach ($key in $ValuesToCheck.Keys) {
         if (($null -ne $CurrentValues[$key]) `
-                -and ($CurrentValues[$key].getType().Name -eq 'DateTime'))
-        {
+                -and ($CurrentValues[$key].getType().Name -eq 'DateTime')) {
             $CurrentValues[$key] = $CurrentValues[$key].toString()
         }
     }
 
-    if ($testResult)
-    {
+    if ($testResult) {
         $testResult = Test-M365DSCParameterState -CurrentValues $CurrentValues `
             -Source $($MyInvocation.MyCommand.Source) `
             -DesiredValues $PSBoundParameters `
@@ -529,8 +574,7 @@ function Test-TargetResource
     return $testResult
 }
 
-function Export-TargetResource
-{
+function Export-TargetResource {
     [CmdletBinding()]
     [OutputType([System.String])]
     param
@@ -583,8 +627,7 @@ function Export-TargetResource
     Add-M365DSCTelemetryEvent -Data $data
     #endregion
 
-    try
-    {
+    try {
 
         #region resource generator code
         [array]$getValue = Get-MgBetaDeviceManagementDeviceConfiguration -Filter $Filter -All `
@@ -596,18 +639,14 @@ function Export-TargetResource
 
         $i = 1
         $dscContent = ''
-        if ($getValue.Length -eq 0)
-        {
+        if ($getValue.Length -eq 0) {
             Write-Host $Global:M365DSCEmojiGreenCheckMark
         }
-        else
-        {
+        else {
             Write-Host "`r`n" -NoNewline
         }
-        foreach ($config in $getValue)
-        {
-            if ($null -ne $Global:M365DSCExportResourceInstancesCount)
-            {
+        foreach ($config in $getValue) {
+            if ($null -ne $Global:M365DSCExportResourceInstancesCount) {
                 $Global:M365DSCExportResourceInstancesCount++
             }
 
@@ -629,15 +668,12 @@ function Export-TargetResource
             $Results = Update-M365DSCExportAuthenticationResults -ConnectionMode $ConnectionMode `
                 -Results $Results
 
-            if ($Results.Assignments)
-            {
+            if ($Results.Assignments) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.Assignments -CIMInstanceName DeviceManagementConfigurationPolicyAssignments
-                if ($complexTypeStringResult)
-                {
+                if ($complexTypeStringResult) {
                     $Results.Assignments = $complexTypeStringResult
                 }
-                else
-                {
+                else {
                     $Results.Remove('Assignments') | Out-Null
                 }
             }
@@ -648,11 +684,9 @@ function Export-TargetResource
                 -Results $Results `
                 -Credential $Credential
 
-            if ($Results.Assignments)
-            {
+            if ($Results.Assignments) {
                 $isCIMArray = $false
-                if ($Results.Assignments.getType().Fullname -like '*[[\]]')
-                {
+                if ($Results.Assignments.getType().Fullname -like '*[[\]]') {
                     $isCIMArray = $true
                 }
                 $currentDSCBlock = Convert-DSCStringParamToVariable -DSCBlock $currentDSCBlock -ParameterName 'Assignments' -IsCIMArray:$isCIMArray
@@ -666,15 +700,12 @@ function Export-TargetResource
         }
         return $dscContent
     }
-    catch
-    {
+    catch {
         if ($_.Exception -like '*401*' -or $_.ErrorDetails.Message -like "*`"ErrorCode`":`"Forbidden`"*" -or `
-        $_.Exception -like "*Request not applicable to target tenant*")
-        {
+                $_.Exception -like "*Request not applicable to target tenant*") {
             Write-Host "`r`n    $($Global:M365DSCEmojiYellowCircle) The current tenant is not registered for Intune."
         }
-        else
-        {
+        else {
             Write-Host $Global:M365DSCEmojiRedX
 
             New-M365DSCLogEntry -Message 'Error during Export:' `
@@ -687,8 +718,7 @@ function Export-TargetResource
         return ''
     }
 }
-function Get-M365DSCAdditionalProperties
-{
+function Get-M365DSCAdditionalProperties {
     [CmdletBinding()]
     [OutputType([System.Collections.Hashtable])]
     param
@@ -700,46 +730,45 @@ function Get-M365DSCAdditionalProperties
 
     $additionalProperties = @(
         'lockScreenFootnote'
+        'homeScreenGridWidth'
+        'homeScreenGridHeight'
         'wallpaperDisplayLocation'
         'airPrintDestinations'
+        'contentFilterSettings'
         'homeScreenDockIcons'
         'homeScreenPages'
+        'notificationSettings'
+        'wallpaperImage'
+        'iosSingleSignOnExtension'
+
     )
 
     $results = @{'@odata.type' = '#microsoft.graph.iosDeviceFeaturesConfiguration' }
     $cloneProperties = $Properties.clone()
-    foreach ($property in $cloneProperties.Keys)
-    {
-        if ($property -in ($additionalProperties) )
-        {
+    foreach ($property in $cloneProperties.Keys) {
+        if ($property -in ($additionalProperties) ) {
             $propertyName = $property[0].ToString().ToLower() + $property.Substring(1, $property.Length - 1)
-            if ($properties.$property -and $properties.$property.getType().FullName -like '*CIMInstance*')
-            {
-                if ($properties.$property.getType().FullName -like '*[[\]]')
-                {
+            if ($properties.$property -and $properties.$property.getType().FullName -like '*CIMInstance*') {
+                if ($properties.$property.getType().FullName -like '*[[\]]') {
                     $array = @()
-                    foreach ($item in $properties.$property)
-                    {
+                    foreach ($item in $properties.$property) {
                         $array += Convert-M365DSCDRGComplexTypeToHashtable -ComplexObject $item
                     }
                     $propertyValue = $array
                 }
-                else
-                {
+                else {
                     $propertyValue = Convert-M365DSCDRGComplexTypeToHashtable -ComplexObject $properties.$property
                 }
 
             }
-            else
-            {
+            else {
                 $propertyValue = $properties.$property
             }
 
             $results.Add($propertyName, $propertyValue)
         }
     }
-    if ($results.Count -eq 1)
-    {
+    if ($results.Count -eq 1) {
         return $null
     }
     return $results

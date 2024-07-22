@@ -17,6 +17,8 @@ class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
     [Key, Description("Display name of the iOS device compliance policy.")] String DisplayName;
     [Write, Description("Description of the iOS device compliance policy.")] String Description;
     [Write, Description("The text you enter is shown on the sign in window and lock screen on devices.")] String lockScreenFootnote;
+
+    
     [Write, Description("Choose a location on devices that shows the image.")] String wallpaperDisplayLocation;
     [Write, Description("Add AirPrint Destination (Be sure to add all printers to the same profile. Apple prevents multiple AirPrint profiles from targeting the same device.)")] String airPrintDestinations;
     [Write, Description("Add up to four (4) items for iPhones, and up to six (6) items for iPads (apps and folders combined) to the dock on the screen.")] String homeScreenDockIcons;
