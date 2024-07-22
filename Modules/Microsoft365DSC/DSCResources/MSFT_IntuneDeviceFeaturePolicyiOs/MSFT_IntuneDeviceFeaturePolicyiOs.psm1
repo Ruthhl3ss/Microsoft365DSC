@@ -20,11 +20,11 @@ function Get-TargetResource {
         $lockScreenFootnote,
 
         [Parameter()]
-        [System.String]
+        [System.Int32]
         $homeScreenGridWidth,
 
         [Parameter()]
-        [System.String]
+        [System.Int32]
         $homeScreenGridHeight,
 
         [Parameter()]
@@ -32,7 +32,7 @@ function Get-TargetResource {
         $wallpaperDisplayLocation,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $airPrintDestinations,
 
         [Parameter()]
@@ -205,11 +205,11 @@ function Set-TargetResource {
         $lockScreenFootnote,
 
         [Parameter()]
-        [System.String]
+        [System.Int32]
         $homeScreenGridWidth,
 
         [Parameter()]
-        [System.String]
+        [System.Int32]
         $homeScreenGridHeight,
 
         [Parameter()]
@@ -217,7 +217,7 @@ function Set-TargetResource {
         $wallpaperDisplayLocation,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $airPrintDestinations,
 
         [Parameter()]
@@ -417,11 +417,11 @@ function Test-TargetResource {
         $lockScreenFootnote,
 
         [Parameter()]
-        [System.String]
+        [System.Int32]
         $homeScreenGridWidth,
 
         [Parameter()]
-        [System.String]
+        [System.Int32]
         $homeScreenGridHeight,
 
         [Parameter()]
@@ -429,7 +429,7 @@ function Test-TargetResource {
         $wallpaperDisplayLocation,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $airPrintDestinations,
 
         [Parameter()]
