@@ -678,12 +678,6 @@ function Export-TargetResource {
             $Results = Update-M365DSCExportAuthenticationResults -ConnectionMode $ConnectionMode `
                 -Results $Results
 
-            $ComplexItems = @(
-                'Assignments'
-                'airPrintDestinations'
-                'contentFilterSettings'
-            )
-
             if ($Results.Assignments) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.Assignments -CIMInstanceName DeviceManagementConfigurationPolicyAssignments
                 if ($complexTypeStringResult) {
