@@ -136,6 +136,11 @@ function Get-TargetResource {
             return $nullResult
         }
 
+        $airPrintDestinationscomplex = @{}
+        $airPrintDestinationscomplex.Add('ipAddress', $getValue.AdditionalProperties.airPrintDestinations.ipAddress)
+        $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
+        $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
+
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
             Id                       = $getValue.id
@@ -145,7 +150,7 @@ function Get-TargetResource {
             homeScreenGridWidth      = $getValue.AdditionalProperties.homeScreenGridWidth
             homeScreenGridHeight     = $getValue.AdditionalProperties.homeScreenGridHeight
             wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
-            airPrintDestinations     = $getValue.AdditionalProperties.airPrintDestinations
+            airPrintDestinations     = $airPrintDestinationscomplex
             contentFilterSettings    = $getValue.AdditionalProperties.contentFilterSettings
             homeScreenDockIcons      = $getValue.AdditionalProperties.homeScreenDockIcons
             homeScreenPages          = $getValue.AdditionalProperties.homeScreenPages
