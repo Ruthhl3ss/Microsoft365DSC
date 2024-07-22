@@ -142,7 +142,7 @@ function Get-TargetResource {
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
 
         $contentFilterSettingscomplex = @{}
-        $contentFilterSettingscomplex.Add('@odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
+        #$contentFilterSettingscomplex.Add('@odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
         $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
         $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
 
