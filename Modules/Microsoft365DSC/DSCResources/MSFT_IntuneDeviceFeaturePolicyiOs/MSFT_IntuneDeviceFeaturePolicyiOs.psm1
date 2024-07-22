@@ -120,14 +120,14 @@ function Get-TargetResource
 
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
-            Id                                            = $devicePolicy.id
-            DisplayName                                   = $devicePolicy.DisplayName
-            Description                                   = $devicePolicy.Description
-            lockScreenFootnote                            = $devicePolicy.AdditionalProperties.lockScreenFootnote
-            wallpaperDisplayLocation                      = $devicePolicy.AdditionalProperties.wallpaperDisplayLocation
-            airPrintDestinations                          = $devicePolicy.AdditionalProperties.airPrintDestinations
-            homeScreenDockIcons                           = $devicePolicy.AdditionalProperties.homeScreenDockIcons
-            homeScreenPages                               = $devicePolicy.AdditionalProperties.homeScreenPages
+            Id                                            = $getValue.id
+            DisplayName                                   = $getValue.DisplayName
+            Description                                   = $getValue.Description
+            lockScreenFootnote                            = $getValue.AdditionalProperties.lockScreenFootnote
+            wallpaperDisplayLocation                      = $getValue.AdditionalProperties.wallpaperDisplayLocation
+            airPrintDestinations                          = $getValue.AdditionalProperties.airPrintDestinations
+            homeScreenDockIcons                           = $getValue.AdditionalProperties.homeScreenDockIcons
+            homeScreenPages                               = $getValue.AdditionalProperties.homeScreenPages
             Ensure                                        = 'Present'
             Credential                                    = $Credential
             ApplicationId                                 = $ApplicationId
@@ -138,7 +138,7 @@ function Get-TargetResource
             AccessTokens                                  = $AccessTokens
         }
 
-        $assignmentsValues = Get-MgBetaDeviceManagementDeviceConfigurationAssignment -DeviceConfigurationId $Id
+        $assignmentsValues = Get-MgBetaDeviceManagementDeviceConfigurationAssignment -DeviceConfigurationId $getValue.Id
         $assignmentResult = @()
         if ($assignmentsValues.Count -gt 0)
         {
