@@ -36,23 +36,23 @@ function Get-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstanceg]
+        [System.String]
         $contentFilterSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $homeScreenPages,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $notificationSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $wallpaperImage,
 
         [Parameter()]
