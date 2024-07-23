@@ -142,21 +142,28 @@ function Get-TargetResource {
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
 
         $contentFilterSettingscomplex = @{}
-        if ($null -ne $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'){
+        if ($null -ne $getValue.AdditionalProperties.contentFilterSettings.'@odata.type') {
             $contentFilterSettingscomplex.Add('odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
         }
         $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
         $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
 
-        $homeScreenDockIconscomplex = @{}
+        $homeScreenDockIconscomplex = @()
+                
         foreach ($object in $getValue.AdditionalProperties.homeScreenDockIcons) {
-            if ($null -ne $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'){
-                $contentFilterSettingscomplex.Add('odata.type', $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'.toString())
+            
+            $PerSettingHomeScreenDockIcons = @{}
+
+            if ($null -ne $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type') {
+                $PerSettingHomeScreenDockIcons.Add('odata.type', $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'.toString())
             }
-            $homeScreenDockIconscomplex.Add('displayName', $getValue.AdditionalProperties.homeScreenDockIcons.displayName)
-            $homeScreenDockIconscomplex.Add('bundleID', $getValue.AdditionalProperties.homeScreenDockIcons.bundleID)
-            $homeScreenDockIconscomplex.Add('isWebClip', $getValue.AdditionalProperties.homeScreenDockIcons.isWebClip)
+            $PerSettingHomeScreenDockIcons.Add('displayName', $getValue.AdditionalProperties.homeScreenDockIcons.displayName)
+            $PerSettingHomeScreenDockIcons.Add('bundleID', $getValue.AdditionalProperties.homeScreenDockIcons.bundleID)
+            $PerSettingHomeScreenDockIcons.Add('isWebClip', $getValue.AdditionalProperties.homeScreenDockIcons.isWebClip)
+
+            $homeScreenDockIconscomplex += $PerSettingHomeScreenDockIcons
         }
+    
 
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
@@ -169,7 +176,7 @@ function Get-TargetResource {
             wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
             airPrintDestinations     = $airPrintDestinationscomplex
             contentFilterSettings    = $contentFilterSettingscomplex
-            homeScreenDockIcons      = $getValue.AdditionalProperties.homeScreenDockIcons
+            homeScreenDockIcons      = $homeScreenDockIconscomplex
             homeScreenPages          = $getValue.AdditionalProperties.homeScreenPages
             notificationSettings     = $getValue.AdditionalProperties.notificationSettings
             wallpaperImage           = $getValue.AdditionalProperties.wallpaperImage
