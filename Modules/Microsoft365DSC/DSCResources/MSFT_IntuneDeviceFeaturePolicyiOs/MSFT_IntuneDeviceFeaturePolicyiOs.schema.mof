@@ -20,7 +20,7 @@ class MSFT_MicrosoftGraphDeviceFeatureairPrintDestinations
 [ClassVersion("1.0.0.0")]
 class MSFT_MicrosoftGraphDeviceFeaturecontentFilterSettings
 {
-    [Write, Description("")] String @odata.type
+    [Write, Description("@odata.type")] String @odata.type
     [Write, Description("Add the URLs you want to allow. These URLs bypass Apple's web filter.")] String allowedUrls
     [Write, Description("Add the URLs you want to stop from opening, regardless of the Apple web filter settings.")] String blockedUrls
 }
