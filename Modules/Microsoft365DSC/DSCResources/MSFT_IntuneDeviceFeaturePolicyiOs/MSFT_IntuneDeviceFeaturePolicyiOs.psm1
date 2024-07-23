@@ -697,7 +697,7 @@ function Export-TargetResource {
                 }
             }
 
-            If ($Result.contentFilterSettings) {
+            If ($Results.contentFilterSettings) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.contentFilterSettings -CIMInstanceName ContentFilterSettings
                 if ($complexTypeStringResult) {
                     $Results.contentFilterSettings = $complexTypeStringResult
