@@ -44,7 +44,7 @@ function Get-TargetResource {
         $homeScreenDockIcons,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenPages,
 
         [Parameter()]
@@ -135,12 +135,13 @@ function Get-TargetResource {
             Write-Verbose -Message "Nothing with id {$id} was found"
             return $nullResult
         }
-
+        #AirPrintDestinationsComplexSettings
         $airPrintDestinationscomplex = @{}
         $airPrintDestinationscomplex.Add('ipAddress', $getValue.AdditionalProperties.airPrintDestinations.ipAddress)
         $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
 
+        #ContentFilterSettingsComplexSettings
         $contentFilterSettingscomplex = @{}
         if ($null -ne $getValue.AdditionalProperties.contentFilterSettings.'@odata.type') {
             $contentFilterSettingscomplex.Add('odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
@@ -148,6 +149,7 @@ function Get-TargetResource {
         $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
         $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
 
+        #HomeScreenDockIconsComplexSettings
         $homeScreenDockIconscomplex = @()
 
         $Index = 0
@@ -173,7 +175,33 @@ function Get-TargetResource {
             $Index++
 
         }
-    
+
+        #HomeScreenPagesComplexSettings
+        $homeScreenPagescomplex = @{
+            Icons = @()
+        }
+
+        $Index = 0
+
+        foreach ($object in $getValue.AdditionalProperties.homeScreenPages) {
+            Write-Verbose "Using index $Index"
+
+            $PerSettingHomeScreenPages = @{}
+
+            $odatatype = $getValue.AdditionalProperties.homeScreenPages.icons.'@odata.type'| Select-Object -Index $Index
+            $DisplayName = $getValue.AdditionalProperties.homeScreenPages.icons.displayName | Select-Object -Index $Index
+            $BundleID = $getValue.AdditionalProperties.homeScreenPages.icons.bundleID | Select-Object -Index $Index
+            $IsWebClip = $getValue.AdditionalProperties.homeScreenPages.icons.isWebClip | Select-Object -Index $Index
+            
+            $PerSettingHomeScreenPages.Add('@odata.type', $odatatype)
+            $PerSettingHomeScreenPages.Add('displayName', $DisplayName)
+            $PerSettingHomeScreenPages.Add('bundleID', $BundleID)
+            $PerSettingHomeScreenPages.Add('isWebClip', $IsWebClip)
+
+            $homeScreenPagescomplex.icons += $PerSettingHomeScreenPages
+
+            $Index++
+        }
 
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
@@ -187,7 +215,7 @@ function Get-TargetResource {
             airPrintDestinations     = $airPrintDestinationscomplex
             contentFilterSettings    = $contentFilterSettingscomplex
             homeScreenDockIcons      = $homeScreenDockIconscomplex
-            homeScreenPages          = $getValue.AdditionalProperties.homeScreenPages
+            homeScreenPages          = $homeScreenPagescomplex
             notificationSettings     = $getValue.AdditionalProperties.notificationSettings
             wallpaperImage           = $getValue.AdditionalProperties.wallpaperImage
             iosSingleSignOnExtension = $getValue.AdditionalProperties.iosSingleSignOnExtension
@@ -268,7 +296,7 @@ function Set-TargetResource {
         $homeScreenDockIcons,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenPages,
 
         [Parameter()]
@@ -480,7 +508,7 @@ function Test-TargetResource {
         $homeScreenDockIcons,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenPages,
 
         [Parameter()]
@@ -744,6 +772,16 @@ function Export-TargetResource {
                 }
                 else {
                     $Results.Remove('homeScreenDockIcons') | Out-Null
+                }
+            }
+
+            If ($Results.homeScreenPages.icons){
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.homeScreenPages.icons -CIMInstanceName HomeScreenPages
+                if ($complexTypeStringResult) {
+                    $Results.homeScreenPages.icons = $complexTypeStringResult
+                }
+                else {
+                    $Results.Remove('homeScreenPages') | Out-Null
                 }
             }
 

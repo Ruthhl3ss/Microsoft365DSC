@@ -34,6 +34,15 @@ class MSFT_MicrosoftGraphDeviceFeaturehomeScreenDockIcons
     [Write, Description("Specify whether this is a webclip or not")] Boolean isWebClip
 }
 
+[ClassVersion("1.0.0.0")]
+class MSFT_MicrosoftGraphDeviceFeaturehomeScreenPages
+{
+    [Write, Description("@odata.type")] String @odata.type
+    [Write, Description("Select existing apps from the list. This option adds apps to the dock on the screen.")] String displayName
+    [Write, Description("The bundleID of the selected application")] String bundleID
+    [Write, Description("Specify whether this is a webclip or not")] Boolean isWebClip
+}
+
 [ClassVersion("1.0.0.0"), FriendlyName("IntuneDeviceFeaturePolicyiOs")]
 class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
 {
@@ -47,7 +56,7 @@ class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
     [Write, Description("Add AirPrint Destination (Be sure to add all printers to the same profile. Apple prevents multiple AirPrint profiles from targeting the same device.)"), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeatureairPrintDestinations")] String airPrintDestinations;
     [Write, Description("These settings use Apple's Web Content Filter settings. For more information on these settings, go to Apple's Platform Deployment site"), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturecontentFilterSettings")] String contentFilterSettings;
     [Write, Description("Add up to four (4) items for iPhones, and up to six (6) items for iPads (apps and folders combined) to the dock on the screen."), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturehomeScreenDockIcons")] String homeScreenDockIcons;
-    [Write, Description("Use this feature to add apps. And, see how these apps look on pages, the dock, and within folders.")] String homeScreenPages;
+    [Write, Description("Use this feature to add apps. And, see how these apps look on pages, the dock, and within folders."), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturehomeScreenPages")] String homeScreenPages;
     [Write, Description("")] String notificationSettings
     [Write, Description("")] String wallpaperImage
     [Write, Description("")] String iosSingleSignOnExtension
