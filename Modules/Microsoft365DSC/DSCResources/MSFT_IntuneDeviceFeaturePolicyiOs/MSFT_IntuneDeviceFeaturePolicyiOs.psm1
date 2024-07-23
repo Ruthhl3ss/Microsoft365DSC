@@ -149,19 +149,29 @@ function Get-TargetResource {
         $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
 
         $homeScreenDockIconscomplex = @()
+
+        $Index = 0
                 
         foreach ($object in $getValue.AdditionalProperties.homeScreenDockIcons) {
-            
+            Write-Verbose "Using index $Index"
+
             $PerSettingHomeScreenDockIcons = @{}
 
-            if ($null -ne $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type') {
-                $PerSettingHomeScreenDockIcons.Add('odata.type', $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'.toString())
-            }
-            $PerSettingHomeScreenDockIcons.Add('displayName', $getValue.AdditionalProperties.homeScreenDockIcons.displayName)
-            $PerSettingHomeScreenDockIcons.Add('bundleID', $getValue.AdditionalProperties.homeScreenDockIcons.bundleID)
-            $PerSettingHomeScreenDockIcons.Add('isWebClip', $getValue.AdditionalProperties.homeScreenDockIcons.isWebClip)
+
+            $odatatype = $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'| Select-Object -Index $Index
+            $DisplayName = $getValue.AdditionalProperties.homeScreenDockIcons.displayName | Select-Object -Index $Index
+            $BundleID = $getValue.AdditionalProperties.homeScreenDockIcons.bundleID | Select-Object -Index $Index
+            $IsWebClip = $getValue.AdditionalProperties.homeScreenDockIcons.isWebClip | Select-Object -Index $Index
+            
+            $PerSettingHomeScreenDockIcons.Add('@odata.type', $odatatype)
+            $PerSettingHomeScreenDockIcons.Add('displayName', $DisplayName)
+            $PerSettingHomeScreenDockIcons.Add('bundleID', $BundleID)
+            $PerSettingHomeScreenDockIcons.Add('isWebClip', $IsWebClip)
 
             $homeScreenDockIconscomplex += $PerSettingHomeScreenDockIcons
+
+            $Index++
+
         }
     
 
