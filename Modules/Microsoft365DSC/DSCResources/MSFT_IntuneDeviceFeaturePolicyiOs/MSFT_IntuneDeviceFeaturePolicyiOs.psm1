@@ -141,13 +141,6 @@ function Get-TargetResource {
         $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
 
-        <#
-        $contentFilterSettingscomplex = @{}
-        $contentFilterSettingscomplex.Add('@odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
-        $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
-        $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
-        #>
-
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
             Id                       = $getValue.id
@@ -233,23 +226,23 @@ function Set-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstanceg]
+        [System.String]
         $contentFilterSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $homeScreenPages,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $notificationSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $wallpaperImage,
 
         [Parameter()]
@@ -445,23 +438,23 @@ function Test-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstanceg]
+        [System.String]
         $contentFilterSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $homeScreenPages,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $notificationSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [System.String]
         $wallpaperImage,
 
         [Parameter()]
@@ -699,18 +692,6 @@ function Export-TargetResource {
                     $Results.Remove('airPrintDestinations') | Out-Null
                 }
             }
-            <#
-            If ($Results.contentFilterSettings) {
-                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.contentFilterSettings -CIMInstanceName ContentFilterSetting
-                if ($complexTypeStringResult) {
-                    $Results.contentFilterSettings = $complexTypeStringResult
-                }
-                else {
-                    $Results.Remove('contentFilterSettings') | Out-Null
-                }
-            }
-                #>
-        
 
             $currentDSCBlock = Get-M365DSCExportContentForResource -ResourceName $ResourceName `
                 -ConnectionMode $ConnectionMode `
