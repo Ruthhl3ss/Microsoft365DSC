@@ -180,7 +180,8 @@ function Get-TargetResource {
         #HomeScreenPagesComplexSettings
         $homeScreenPagescomplex = @(
             Displayname = $null   
-            icons = @()  
+            icons = @()
+            
         )
         $Index = 0
         foreach ($object in $getValue.AdditionalProperties.homeScreenPages.icons) {
@@ -197,12 +198,11 @@ function Get-TargetResource {
             $IsWebClip = $getValue.AdditionalProperties.homeScreenPages.icons.isWebClip | Select-Object -Index $Index
             $PerSettingHomeScreenPages.Add('isWebClip', $IsWebClip)
 
-            $homeScreenPagescomplex.icons += $PerSettingHomeScreenPages
+            $homeScreenPagescomplex += $PerSettingHomeScreenPages
 
             $Index++
         }
-            #>
-        
+        #>
 
         $notificationSettingscomplex = @{}
         $Index = 0
