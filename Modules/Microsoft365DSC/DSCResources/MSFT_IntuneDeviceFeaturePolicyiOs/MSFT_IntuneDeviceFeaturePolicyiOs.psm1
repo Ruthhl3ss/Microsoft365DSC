@@ -141,10 +141,12 @@ function Get-TargetResource {
         $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
 
+        <#
         $contentFilterSettingscomplex = @{}
         $contentFilterSettingscomplex.Add('@odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
         $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
         $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
+        #>
 
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
@@ -156,7 +158,7 @@ function Get-TargetResource {
             homeScreenGridHeight     = $getValue.AdditionalProperties.homeScreenGridHeight
             wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
             airPrintDestinations     = $airPrintDestinationscomplex
-            contentFilterSettings    = $contentFilterSettingscomplex
+            contentFilterSettings    = $getValue.AdditionalProperties.contentFilterSettings
             homeScreenDockIcons      = $getValue.AdditionalProperties.homeScreenDockIcons
             homeScreenPages          = $getValue.AdditionalProperties.homeScreenPages
             notificationSettings     = $getValue.AdditionalProperties.notificationSettings
@@ -697,7 +699,7 @@ function Export-TargetResource {
                     $Results.Remove('airPrintDestinations') | Out-Null
                 }
             }
-            <#
+            
             If ($Results.contentFilterSettings) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.contentFilterSettings -CIMInstanceName ContentFilterSetting
                 if ($complexTypeStringResult) {
@@ -707,7 +709,7 @@ function Export-TargetResource {
                     $Results.Remove('contentFilterSettings') | Out-Null
                 }
             }
-                #>
+        
 
             $currentDSCBlock = Get-M365DSCExportContentForResource -ResourceName $ResourceName `
                 -ConnectionMode $ConnectionMode `
