@@ -32,31 +32,31 @@ function Get-TargetResource {
         $wallpaperDisplayLocation,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $airPrintDestinations,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $contentFilterSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $homeScreenPages,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $notificationSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $wallpaperImage,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $iosSingleSignOnExtension,
 
         [Parameter()]
@@ -136,139 +136,27 @@ function Get-TargetResource {
             return $nullResult
         }
 
-        
-        #AirPrintDestinationsComplexSettings
-        $airPrintDestinationscomplex = @{}
-        $airPrintDestinationscomplex.Add('ipAddress', $getValue.AdditionalProperties.airPrintDestinations.ipAddress)
-        $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
-        $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
-        
-        #ContentFilterSettingsComplexSettings
-        $contentFilterSettingscomplex = @{}
-        if ($null -ne $getValue.AdditionalProperties.contentFilterSettings.'@odata.type') {
-            $contentFilterSettingscomplex.Add('odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
-        }
-        $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
-        $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
+        $uri = "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations/$($getValue.id)"
 
-        #HomeScreenDockIconsComplexSettings
-        $homeScreenDockIconscomplex = @()
-
-        $Index = 0
-                
-        foreach ($object in $getValue.AdditionalProperties.homeScreenDockIcons) {
-            Write-Verbose "Using index $Index"
-
-            $PerSettingHomeScreenDockIcons = @{}
-
-
-            $odatatype = $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'| Select-Object -Index $Index
-            $PerSettingHomeScreenDockIcons.Add('@odata.type', $odatatype)
-            $DisplayName = $getValue.AdditionalProperties.homeScreenDockIcons.displayName | Select-Object -Index $Index
-            $PerSettingHomeScreenDockIcons.Add('displayName', $DisplayName)
-            $BundleID = $getValue.AdditionalProperties.homeScreenDockIcons.bundleID | Select-Object -Index $Index
-            $PerSettingHomeScreenDockIcons.Add('bundleID', $BundleID)
-            $IsWebClip = $getValue.AdditionalProperties.homeScreenDockIcons.isWebClip | Select-Object -Index $Index
-            $PerSettingHomeScreenDockIcons.Add('isWebClip', $IsWebClip)
-
-            $homeScreenDockIconscomplex += $PerSettingHomeScreenDockIcons
-
-            $Index++
-
-        }
-        <#
-        #HomeScreenPagesComplexSettings
-        $homeScreenPagescomplex = @(
-            Displayname = $null   
-            icons = @()
-            
-        )
-        $Index = 0
-        foreach ($object in $getValue.AdditionalProperties.homeScreenPages.icons) {
-            Write-Verbose "Using index $Index"
-
-            $PerSettingHomeScreenPages = @{}
-
-            $odatatype = $getValue.AdditionalProperties.homeScreenPages.icons.'@odata.type'| Select-Object -Index $Index
-            $PerSettingHomeScreenPages.Add('@odata.type', $odatatype)
-            $DisplayName = $getValue.AdditionalProperties.homeScreenPages.icons.displayName | Select-Object -Index $Index
-            $PerSettingHomeScreenPages.Add('displayName', $DisplayName)
-            $BundleID = $getValue.AdditionalProperties.homeScreenPages.icons.bundleID | Select-Object -Index $Index
-            $PerSettingHomeScreenPages.Add('bundleID', $BundleID)
-            $IsWebClip = $getValue.AdditionalProperties.homeScreenPages.icons.isWebClip | Select-Object -Index $Index
-            $PerSettingHomeScreenPages.Add('isWebClip', $IsWebClip)
-
-            $homeScreenPagescomplex += $PerSettingHomeScreenPages
-
-            $Index++
-        }
-        #>
-
-        $notificationSettingscomplex = @{}
-        $Index = 0
-        foreach ($object in $getValue.AdditionalProperties.notificationSettings) {
-            Write-Verbose "Using index $Index"
-
-            $PerSettingNotificationSettings = @{}
-
-            $BundleID = $getValue.AdditionalProperties.notificationSettings.bundleID | Select-Object -Index $Index
-            $PerSettingNotificationSettings.Add('bundleID', $BundleID)
-            $appName = $getValue.AdditionalProperties.notificationSettings.appName | Select-Object -Index $Index
-            $PerSettingNotificationSettings.Add('appName', $appName)
-            $publisher = $getValue.AdditionalProperties.notificationSettings.publisher | Select-Object -Index $Index
-            $PerSettingNotificationSettings.Add('publisher', $publisher)
-            $enabled = $getValue.AdditionalProperties.notificationSettings.enabled | Select-Object -Index $Index
-            $PerSettingNotificationSettings.Add('enabled', $enabled)
-
-            $showInNotificationCenter = $getValue.AdditionalProperties.notificationSettings.showInNotificationCenter | Select-Object -Index $Index -ErrorAction SilentlyContinue
-            If ($showInNotificationCenter -ne $null) {
-                $PerSettingNotificationSettings.Add('showInNotificationCenter', $showInNotificationCenter)
-            }
-            $showOnLockScreen = $getValue.AdditionalProperties.notificationSettings.showOnLockScreen | Select-Object -Index $Index -ErrorAction SilentlyContinue
-            If ($showOnLockScreen -ne $null) {
-                $PerSettingNotificationSettings.Add('showOnLockScreen', $showOnLockScreen)
-            } 
-            $alertType = $getValue.AdditionalProperties.notificationSettings.alertType | Select-Object -Index $Index -ErrorAction SilentlyContinue
-            If ($alertType -ne $null) {
-                $PerSettingNotificationSettings.Add('alertType', $alertType)
-            }
-            $badgesEnabled = $getValue.AdditionalProperties.notificationSettings.badgesEnabled | Select-Object -Index $Index -ErrorAction SilentlyContinue
-            if ($badgesEnabled -ne $null) {
-                $PerSettingNotificationSettings.Add('badgesEnabled', $badgesEnabled)
-            }
-            $soundsEnabled = $getValue.AdditionalProperties.notificationSettings.soundsEnabled | Select-Object -Index $Index -ErrorAction SilentlyContinue
-            if ($soundsEnabled -ne $null) {
-                $PerSettingNotificationSettings.Add('soundsEnabled', $soundsEnabled)
-            }
-            $previewVisibility = $getValue.AdditionalProperties.notificationSettings.previewVisibility | Select-Object -Index $Index -ErrorAction SilentlyContinue
-            if ($previewVisibility -ne $null) {
-                $PerSettingNotificationSettings.Add('previewVisibility', $previewVisibility)
-            }
-
-            $notificationSettingscomplex += $PerSettingNotificationSettings
-
-            $Index++
-
-        }
-
+        $Policy = Invoke-MGGraphRequest -Uri $uri -Method Get
 
 
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
-            Id                       = $getValue.id
-            DisplayName              = $getValue.DisplayName
-            Description              = $getValue.Description
-            lockScreenFootnote       = $getValue.AdditionalProperties.lockScreenFootnote
-            homeScreenGridWidth      = $getValue.AdditionalProperties.homeScreenGridWidth
-            homeScreenGridHeight     = $getValue.AdditionalProperties.homeScreenGridHeight
-            wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
-            airPrintDestinations     = $airPrintDestinationscomplex
-            contentFilterSettings    = $contentFilterSettingscomplex
-            homeScreenDockIcons      = $homeScreenDockIconscomplex
-            homeScreenPages          = $homeScreenPagescomplex
-            notificationSettings     = $notificationSettingscomplex
-            wallpaperImage           = $getValue.AdditionalProperties.wallpaperImage
-            iosSingleSignOnExtension = $getValue.AdditionalProperties.iosSingleSignOnExtension
+            Id                       = $Policy.id
+            DisplayName              = $Policy.DisplayName
+            Description              = $Policy.Description
+            lockScreenFootnote       = $Policy.lockScreenFootnote
+            homeScreenGridWidth      = $Policy.homeScreenGridWidth
+            homeScreenGridHeight     = $Policy.homeScreenGridHeight
+            wallpaperDisplayLocation = $Policy.wallpaperDisplayLocation
+            airPrintDestinations     = $Policy.airPrintDestinations
+            contentFilterSettings    = $Policy.contentFilterSettings
+            homeScreenDockIcons      = $Policy.homeScreenDockIcons
+            homeScreenPages          = $Policy.homeScreenPages
+            notificationSettings     = $Policy.notificationSettings
+            wallpaperImage           = $Policy.wallpaperImage
+            iosSingleSignOnExtension = $Policy.iosSingleSignOnExtension
             Ensure                   = 'Present'
             Credential               = $Credential
             ApplicationId            = $ApplicationId
@@ -334,31 +222,31 @@ function Set-TargetResource {
         $wallpaperDisplayLocation,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $airPrintDestinations,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $contentFilterSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $homeScreenPages,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $notificationSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $wallpaperImage,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $iosSingleSignOnExtension,
 
         [Parameter()]
@@ -546,31 +434,31 @@ function Test-TargetResource {
         $wallpaperDisplayLocation,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $airPrintDestinations,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $contentFilterSettings,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $homeScreenDockIcons,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $homeScreenPages,
 
         [Parameter()]
-        [Microsoft.Management.Infrastructure.CimInstance]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $notificationSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $wallpaperImage,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
         $iosSingleSignOnExtension,
 
         [Parameter()]
@@ -785,6 +673,7 @@ function Export-TargetResource {
             $Results = Update-M365DSCExportAuthenticationResults -ConnectionMode $ConnectionMode `
                 -Results $Results
 
+
             if ($Results.Assignments) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.Assignments -CIMInstanceName DeviceManagementConfigurationPolicyAssignments
                 if ($complexTypeStringResult) {
@@ -829,12 +718,42 @@ function Export-TargetResource {
             }
 
             If ($Results.homeScreenPages){
-                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.homeScreenPages.icons -CIMInstanceName HomeScreenPages
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.homeScreenPages -CIMInstanceName HomeScreenPages
                 if ($complexTypeStringResult) {
-                    $Results.homeScreenPages.icons = $complexTypeStringResult
+                    $Results.homeScreenPages = $complexTypeStringResult
                 }
                 else {
                     $Results.Remove('homeScreenPages') | Out-Null
+                }
+            }
+
+            If ($Results.notificationSettings){
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.notificationSettings -CIMInstanceName notificationSettings
+                if ($complexTypeStringResult) {
+                    $Results.notificationSettings = $complexTypeStringResult
+                }
+                else {
+                    $Results.Remove('notificationSettings') | Out-Null
+                }
+            }
+
+            If ($Results.wallpaperImage){
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.wallpaperImage -CIMInstanceName wallpaperImage
+                if ($complexTypeStringResult) {
+                    $Results.wallpaperImage = $complexTypeStringResult
+                }
+                else {
+                    $Results.Remove('wallpaperImage') | Out-Null
+                }
+            }
+
+            If ($Results.iosSingleSignOnExtension){
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.iosSingleSignOnExtension -CIMInstanceName iosSingleSignOnExtension
+                if ($complexTypeStringResult) {
+                    $Results.iosSingleSignOnExtension = $complexTypeStringResult
+                }
+                else {
+                    $Results.Remove('iosSingleSignOnExtension') | Out-Null
                 }
             }
 
