@@ -12,9 +12,17 @@ class MSFT_DeviceManagementConfigurationPolicyAssignments
 [ClassVersion("1.0.0.0")]
 class MSFT_MicrosoftGraphDeviceFeatureairPrintDestinations
 {
-    [Write, Description ("Enter the IPv4 or IPv6 address of the printer")] string ipAddress;
-    [Write, Description ("The path is typically ipp/print for printers on your network")] string resourcePath;
-    [Write, Description ("(default) doesn't secure AirPrint connections with TLS. Enable secures AirPrint connections with Transport Layer Security (TLS).")] Boolean forceTls;
+    [Write, Description("Enter the IPv4 or IPv6 address of the printer")] string ipAddress;
+    [Write, Description("The path is typically ipp/print for printers on your network")] string resourcePath;
+    [Write, Description("(default) doesn't secure AirPrint connections with TLS. Enable secures AirPrint connections with Transport Layer Security (TLS).")] Boolean forceTls;
+}
+
+[ClassVersion("1.0.0.0")]
+class MSFT_MicrosoftGraphDeviceFeaturecontentFilterSettings
+{
+    [Write, Description("")] String @odata.type
+    [Write, Description("Add the URLs you want to allow. These URLs bypass Apple's web filter.")] String allowedUrls
+    [Write, Description("Add the URLs you want to stop from opening, regardless of the Apple web filter settings.")] String blockedUrls
 }
 
 [ClassVersion("1.0.0.0"), FriendlyName("IntuneDeviceFeaturePolicyiOs")]
@@ -24,12 +32,16 @@ class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
     [Key, Description("Display name of the iOS device compliance policy.")] String DisplayName;
     [Write, Description("Description of the iOS device compliance policy.")] String Description;
     [Write, Description("The text you enter is shown on the sign in window and lock screen on devices.")] String lockScreenFootnote;
-    [Write, Description("")] Int32 homeScreenGridWidth;
-    [Write, Description("")] Int32 homeScreenGridHeight;
+    [Write, Description("Choose an appropriate grid size for the device's home screen.")] Int32 homeScreenGridWidth;
+    [Write, Description("Choose an appropriate grid size for the device's home screen.")] Int32 homeScreenGridHeight;
     [Write, Description("Choose a location on devices that shows the image.")] String wallpaperDisplayLocation;
     [Write, Description("Add AirPrint Destination (Be sure to add all printers to the same profile. Apple prevents multiple AirPrint profiles from targeting the same device.)"), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeatureairPrintDestinations")] String airPrintDestinations;
+    [Write, Description("These settings use Apple's Web Content Filter settings. For more information on these settings, go to Apple's Platform Deployment site")] String contentFilterSettings;
     [Write, Description("Add up to four (4) items for iPhones, and up to six (6) items for iPads (apps and folders combined) to the dock on the screen.")] String homeScreenDockIcons;
     [Write, Description("Use this feature to add apps. And, see how these apps look on pages, the dock, and within folders.")] String homeScreenPages;
+    [Write, Description("")] String notificationSettings
+    [Write, Description("")] String wallpaperImage
+    [Write, Description("")] String iosSingleSignOnExtension
     [Write, Description("Represents the assignment to the Intune policy."), EmbeddedInstance("MSFT_DeviceManagementConfigurationPolicyAssignments")] String Assignments[];
     [Write, Description("Present ensures the policy exists, absent ensures it is removed."), ValueMap{"Present","Absent"}, Values{"Present","Absent"}] string Ensure;
     [Write, Description("Credentials of the Intune Admin"), EmbeddedInstance("MSFT_Credential")] string Credential;
