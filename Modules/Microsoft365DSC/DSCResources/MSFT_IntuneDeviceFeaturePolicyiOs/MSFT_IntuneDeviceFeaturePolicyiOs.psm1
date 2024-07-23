@@ -135,12 +135,14 @@ function Get-TargetResource {
             Write-Verbose -Message "Nothing with id {$id} was found"
             return $nullResult
         }
+
+        <#
         #AirPrintDestinationsComplexSettings
         $airPrintDestinationscomplex = @{}
         $airPrintDestinationscomplex.Add('ipAddress', $getValue.AdditionalProperties.airPrintDestinations.ipAddress)
         $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
-
+        #>
         #ContentFilterSettingsComplexSettings
         $contentFilterSettingscomplex = @{}
         if ($null -ne $getValue.AdditionalProperties.contentFilterSettings.'@odata.type') {
@@ -212,7 +214,7 @@ function Get-TargetResource {
             homeScreenGridWidth      = $getValue.AdditionalProperties.homeScreenGridWidth
             homeScreenGridHeight     = $getValue.AdditionalProperties.homeScreenGridHeight
             wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
-            airPrintDestinations     = $airPrintDestinationscomplex
+            airPrintDestinations     = $getValue.AdditionalProperties.airPrintDestinationscomplex
             contentFilterSettings    = $contentFilterSettingscomplex
             homeScreenDockIcons      = $homeScreenDockIconscomplex
             homeScreenPages          = $homeScreenPagescomplex
@@ -746,7 +748,7 @@ function Export-TargetResource {
             }
 
             If ($Results.airPrintDestinations) {
-                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.airPrintDestinations -CIMInstanceName AirPrintDestination
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject ([Array]$Results.airPrintDestinations) -CIMInstanceName AirPrintDestination
                 if ($complexTypeStringResult) {
                     $Results.airPrintDestinations = $complexTypeStringResult
                 }
