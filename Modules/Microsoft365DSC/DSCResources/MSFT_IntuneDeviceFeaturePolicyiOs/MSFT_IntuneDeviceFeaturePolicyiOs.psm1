@@ -48,7 +48,7 @@ function Get-TargetResource {
         $homeScreenPages,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $notificationSettings,
 
         [Parameter()]
@@ -136,13 +136,13 @@ function Get-TargetResource {
             return $nullResult
         }
 
-        <#
+        
         #AirPrintDestinationsComplexSettings
         $airPrintDestinationscomplex = @{}
         $airPrintDestinationscomplex.Add('ipAddress', $getValue.AdditionalProperties.airPrintDestinations.ipAddress)
         $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
-        #>
+        
         #ContentFilterSettingsComplexSettings
         $contentFilterSettingscomplex = @{}
         if ($null -ne $getValue.AdditionalProperties.contentFilterSettings.'@odata.type') {
@@ -163,13 +163,12 @@ function Get-TargetResource {
 
 
             $odatatype = $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'| Select-Object -Index $Index
-            $DisplayName = $getValue.AdditionalProperties.homeScreenDockIcons.displayName | Select-Object -Index $Index
-            $BundleID = $getValue.AdditionalProperties.homeScreenDockIcons.bundleID | Select-Object -Index $Index
-            $IsWebClip = $getValue.AdditionalProperties.homeScreenDockIcons.isWebClip | Select-Object -Index $Index
-            
             $PerSettingHomeScreenDockIcons.Add('@odata.type', $odatatype)
+            $DisplayName = $getValue.AdditionalProperties.homeScreenDockIcons.displayName | Select-Object -Index $Index
             $PerSettingHomeScreenDockIcons.Add('displayName', $DisplayName)
+            $BundleID = $getValue.AdditionalProperties.homeScreenDockIcons.bundleID | Select-Object -Index $Index
             $PerSettingHomeScreenDockIcons.Add('bundleID', $BundleID)
+            $IsWebClip = $getValue.AdditionalProperties.homeScreenDockIcons.isWebClip | Select-Object -Index $Index
             $PerSettingHomeScreenDockIcons.Add('isWebClip', $IsWebClip)
 
             $homeScreenDockIconscomplex += $PerSettingHomeScreenDockIcons
@@ -177,33 +176,82 @@ function Get-TargetResource {
             $Index++
 
         }
-
+        <#
         #HomeScreenPagesComplexSettings
-        $homeScreenPagescomplex = @{
-            Icons = @()
-        }
-
+        $homeScreenPagescomplex = @(
+            Displayname = $null   
+            icons = @()  
+        )
         $Index = 0
-
-        foreach ($object in $getValue.AdditionalProperties.homeScreenPages) {
+        foreach ($object in $getValue.AdditionalProperties.homeScreenPages.icons) {
             Write-Verbose "Using index $Index"
 
             $PerSettingHomeScreenPages = @{}
 
             $odatatype = $getValue.AdditionalProperties.homeScreenPages.icons.'@odata.type'| Select-Object -Index $Index
-            $DisplayName = $getValue.AdditionalProperties.homeScreenPages.icons.displayName | Select-Object -Index $Index
-            $BundleID = $getValue.AdditionalProperties.homeScreenPages.icons.bundleID | Select-Object -Index $Index
-            $IsWebClip = $getValue.AdditionalProperties.homeScreenPages.icons.isWebClip | Select-Object -Index $Index
-            
             $PerSettingHomeScreenPages.Add('@odata.type', $odatatype)
+            $DisplayName = $getValue.AdditionalProperties.homeScreenPages.icons.displayName | Select-Object -Index $Index
             $PerSettingHomeScreenPages.Add('displayName', $DisplayName)
+            $BundleID = $getValue.AdditionalProperties.homeScreenPages.icons.bundleID | Select-Object -Index $Index
             $PerSettingHomeScreenPages.Add('bundleID', $BundleID)
+            $IsWebClip = $getValue.AdditionalProperties.homeScreenPages.icons.isWebClip | Select-Object -Index $Index
             $PerSettingHomeScreenPages.Add('isWebClip', $IsWebClip)
 
             $homeScreenPagescomplex.icons += $PerSettingHomeScreenPages
 
             $Index++
         }
+            #>
+        
+
+        $notificationSettingscomplex = @{}
+        $Index = 0
+        foreach ($object in $getValue.AdditionalProperties.notificationSettings) {
+            Write-Verbose "Using index $Index"
+
+            $PerSettingNotificationSettings = @{}
+
+            $BundleID = $getValue.AdditionalProperties.notificationSettings.bundleID | Select-Object -Index $Index
+            $PerSettingNotificationSettings.Add('bundleID', $BundleID)
+            $appName = $getValue.AdditionalProperties.notificationSettings.appName | Select-Object -Index $Index
+            $PerSettingNotificationSettings.Add('appName', $appName)
+            $publisher = $getValue.AdditionalProperties.notificationSettings.publisher | Select-Object -Index $Index
+            $PerSettingNotificationSettings.Add('publisher', $publisher)
+            $enabled = $getValue.AdditionalProperties.notificationSettings.enabled | Select-Object -Index $Index
+            $PerSettingNotificationSettings.Add('enabled', $enabled)
+
+            $showInNotificationCenter = $getValue.AdditionalProperties.notificationSettings.showInNotificationCenter | Select-Object -Index $Index -ErrorAction SilentlyContinue
+            If ($showInNotificationCenter -ne $null) {
+                $PerSettingNotificationSettings.Add('showInNotificationCenter', $showInNotificationCenter)
+            }
+            $showOnLockScreen = $getValue.AdditionalProperties.notificationSettings.showOnLockScreen | Select-Object -Index $Index -ErrorAction SilentlyContinue
+            If ($showOnLockScreen -ne $null) {
+                $PerSettingNotificationSettings.Add('showOnLockScreen', $showOnLockScreen)
+            } 
+            $alertType = $getValue.AdditionalProperties.notificationSettings.alertType | Select-Object -Index $Index -ErrorAction SilentlyContinue
+            If ($alertType -ne $null) {
+                $PerSettingNotificationSettings.Add('alertType', $alertType)
+            }
+            $badgesEnabled = $getValue.AdditionalProperties.notificationSettings.badgesEnabled | Select-Object -Index $Index -ErrorAction SilentlyContinue
+            if ($badgesEnabled -ne $null) {
+                $PerSettingNotificationSettings.Add('badgesEnabled', $badgesEnabled)
+            }
+            $soundsEnabled = $getValue.AdditionalProperties.notificationSettings.soundsEnabled | Select-Object -Index $Index -ErrorAction SilentlyContinue
+            if ($soundsEnabled -ne $null) {
+                $PerSettingNotificationSettings.Add('soundsEnabled', $soundsEnabled)
+            }
+            $previewVisibility = $getValue.AdditionalProperties.notificationSettings.previewVisibility | Select-Object -Index $Index -ErrorAction SilentlyContinue
+            if ($previewVisibility -ne $null) {
+                $PerSettingNotificationSettings.Add('previewVisibility', $previewVisibility)
+            }
+
+            $notificationSettingscomplex += $PerSettingNotificationSettings
+
+            $Index++
+
+        }
+
+
 
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
@@ -214,11 +262,11 @@ function Get-TargetResource {
             homeScreenGridWidth      = $getValue.AdditionalProperties.homeScreenGridWidth
             homeScreenGridHeight     = $getValue.AdditionalProperties.homeScreenGridHeight
             wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
-            airPrintDestinations     = $getValue.AdditionalProperties.airPrintDestinationscomplex
+            airPrintDestinations     = $airPrintDestinationscomplex
             contentFilterSettings    = $contentFilterSettingscomplex
             homeScreenDockIcons      = $homeScreenDockIconscomplex
             homeScreenPages          = $homeScreenPagescomplex
-            notificationSettings     = $getValue.AdditionalProperties.notificationSettings
+            notificationSettings     = $notificationSettingscomplex
             wallpaperImage           = $getValue.AdditionalProperties.wallpaperImage
             iosSingleSignOnExtension = $getValue.AdditionalProperties.iosSingleSignOnExtension
             Ensure                   = 'Present'
@@ -302,7 +350,7 @@ function Set-TargetResource {
         $homeScreenPages,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $notificationSettings,
 
         [Parameter()]
@@ -514,7 +562,7 @@ function Test-TargetResource {
         $homeScreenPages,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $notificationSettings,
 
         [Parameter()]
@@ -748,11 +796,14 @@ function Export-TargetResource {
             }
 
             If ($Results.airPrintDestinations) {
+                Write-Verbose -Message "Using Get-M365DSCDRGComplexTypeToString for airPrintDestinations"
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject ([Array]$Results.airPrintDestinations) -CIMInstanceName AirPrintDestination
                 if ($complexTypeStringResult) {
+                    Write-Verbose -Message "Setting airPrintDestinations to $complexTypeStringResult"
                     $Results.airPrintDestinations = $complexTypeStringResult
                 }
                 else {
+                    Write-Verbose -Message "Setting airPrintDestinations to $null"
                     $Results.Remove('airPrintDestinations') | Out-Null
                 }
             }
@@ -777,7 +828,7 @@ function Export-TargetResource {
                 }
             }
 
-            If ($Results.homeScreenPages.icons){
+            If ($Results.homeScreenPages){
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.homeScreenPages.icons -CIMInstanceName HomeScreenPages
                 if ($complexTypeStringResult) {
                     $Results.homeScreenPages.icons = $complexTypeStringResult

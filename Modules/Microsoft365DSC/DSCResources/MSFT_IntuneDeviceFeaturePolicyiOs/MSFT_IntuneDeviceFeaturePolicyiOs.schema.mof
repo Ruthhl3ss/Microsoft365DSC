@@ -43,6 +43,21 @@ class MSFT_MicrosoftGraphDeviceFeaturehomeScreenPages
     [Write, Description("Specify whether this is a webclip or not")] Boolean isWebClip
 }
 
+[ClassVersion("1.0.0.0")]
+class MSFT_MicrosoftGraphDeviceFeaturenotificationSettings
+{
+    [Write, Description("Enter the App Bundle ID of the app you want to add.")] String bundleID
+    [Write, Description("Enter the name of the app you want to add.")] String appName
+    [Write, Description("Enter the publisher of the app you're adding")] String publisher
+    [Write, Description("Enable or Disable the app from sending notifications to devices")] String enabled
+    [Write, Description("Enable allows the app to show notifications in the device Notification Center. Disable prevents the app from showing notifications in the Notification Center. When set to Not configured or left blank, Intune doesn't change or update this setting.")] String showInNotificationCenter
+    [Write, Description("Enable shows app notifications on the device lock screen. Disable prevents the app from showing notifications on the lock screen. When set to Not configured or left blank, Intune doesn't change or update this setting.")] String showOnLockScreen
+    [Write, Description("When devices are unlocked, choose how the notification is shown")] String alertType
+    [Write, Description("Enable adds a badge to the app icon. The badge means the app sent a notification. Disable doesn't add a badge to the app icon. When set to Not configured, Intune doesn't change or update this setting.")] String badgesEnabled
+    [Write, Description("Enable plays a sound when a notification is delivered. Disable doesn't plays a sound when a notification is delivered. When set to Not configured, Intune doesn't change or update this setting.")] String soundsEnabled
+    [Write, Description("Shows a preview of recent app notifications. Select when to show the preview. The value you choose overrides the user configured value on the device")] String previewVisibility
+}
+
 [ClassVersion("1.0.0.0"), FriendlyName("IntuneDeviceFeaturePolicyiOs")]
 class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
 {
@@ -57,7 +72,7 @@ class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
     [Write, Description("These settings use Apple's Web Content Filter settings. For more information on these settings, go to Apple's Platform Deployment site"), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturecontentFilterSettings")] String contentFilterSettings;
     [Write, Description("Add up to four (4) items for iPhones, and up to six (6) items for iPads (apps and folders combined) to the dock on the screen."), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturehomeScreenDockIcons")] String homeScreenDockIcons;
     [Write, Description("Use this feature to add apps. And, see how these apps look on pages, the dock, and within folders."), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturehomeScreenPages")] String homeScreenPages;
-    [Write, Description("")] String notificationSettings
+    [Write, Description("Specify notification settings for apps"), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturenotificationSettings")] String notificationSettings
     [Write, Description("")] String wallpaperImage
     [Write, Description("")] String iosSingleSignOnExtension
     [Write, Description("Represents the assignment to the Intune policy."), EmbeddedInstance("MSFT_DeviceManagementConfigurationPolicyAssignments")] String Assignments[];
