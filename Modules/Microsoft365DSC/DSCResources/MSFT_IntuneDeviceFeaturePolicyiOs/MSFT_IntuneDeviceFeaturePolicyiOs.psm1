@@ -36,7 +36,7 @@ function Get-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $contentFilterSettings,
 
         [Parameter()]
@@ -141,6 +141,10 @@ function Get-TargetResource {
         $airPrintDestinationscomplex.Add('resourcePath', $getValue.AdditionalProperties.airPrintDestinations.resourcePath)
         $airPrintDestinationscomplex.Add('forceTls', $getValue.AdditionalProperties.airPrintDestinations.forceTls)
 
+        $contentFilterSettingscomplex = @{}
+        $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
+        $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
+
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
             Id                       = $getValue.id
@@ -151,7 +155,7 @@ function Get-TargetResource {
             homeScreenGridHeight     = $getValue.AdditionalProperties.homeScreenGridHeight
             wallpaperDisplayLocation = $getValue.AdditionalProperties.wallpaperDisplayLocation
             airPrintDestinations     = $airPrintDestinationscomplex
-            contentFilterSettings    = $getValue.AdditionalProperties.contentFilterSettings
+            contentFilterSettings    = $contentFilterSettingscomplex
             homeScreenDockIcons      = $getValue.AdditionalProperties.homeScreenDockIcons
             homeScreenPages          = $getValue.AdditionalProperties.homeScreenPages
             notificationSettings     = $getValue.AdditionalProperties.notificationSettings
@@ -226,7 +230,7 @@ function Set-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $contentFilterSettings,
 
         [Parameter()]
@@ -438,7 +442,7 @@ function Test-TargetResource {
         $airPrintDestinations,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $contentFilterSettings,
 
         [Parameter()]
@@ -690,6 +694,16 @@ function Export-TargetResource {
                 }
                 else {
                     $Results.Remove('airPrintDestinations') | Out-Null
+                }
+            }
+
+            If (Result.contentFilterSettings) {
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.contentFilterSettings -CIMInstanceName ContentFilterSettings
+                if ($complexTypeStringResult) {
+                    $Results.contentFilterSettings = $complexTypeStringResult
+                }
+                else {
+                    $Results.Remove('contentFilterSettings') | Out-Null
                 }
             }
 
