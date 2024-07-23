@@ -148,7 +148,7 @@ function Get-TargetResource {
         $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
         $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
 
-        $homeScreenDockIconscomplex = [System.Collections.Generic.List[string]]::new()
+        $homeScreenDockIconscomplex = @()
 
         $Index = 0
                 
@@ -168,7 +168,7 @@ function Get-TargetResource {
             $PerSettingHomeScreenDockIcons.Add('bundleID', $BundleID)
             $PerSettingHomeScreenDockIcons.Add('isWebClip', $IsWebClip)
 
-            $homeScreenDockIconscomplex.Add($PerSettingHomeScreenDockIcons)
+            $homeScreenDockIconscomplex += $PerSettingHomeScreenDockIcons
 
             $Index++
 
