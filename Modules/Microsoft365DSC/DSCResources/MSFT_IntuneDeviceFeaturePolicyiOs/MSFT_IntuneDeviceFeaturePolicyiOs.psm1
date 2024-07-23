@@ -40,7 +40,7 @@ function Get-TargetResource {
         $contentFilterSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenDockIcons,
 
         [Parameter()]
@@ -148,6 +148,16 @@ function Get-TargetResource {
         $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
         $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
 
+        $homeScreenDockIconscomplex = @{}
+        foreach ($object in $getValue.AdditionalProperties.homeScreenDockIcons) {
+            if ($null -ne $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'){
+                $contentFilterSettingscomplex.Add('odata.type', $getValue.AdditionalProperties.homeScreenDockIcons.'@odata.type'.toString())
+            }
+            $homeScreenDockIconscomplex.Add('displayName', $getValue.AdditionalProperties.homeScreenDockIcons.displayName)
+            $homeScreenDockIconscomplex.Add('bundleID', $getValue.AdditionalProperties.homeScreenDockIcons.bundleID)
+            $homeScreenDockIconscomplex.Add('isWebClip', $getValue.AdditionalProperties.homeScreenDockIcons.isWebClip)
+        }
+
         Write-Verbose -Message "Found something with id {$id}"
         $results = @{
             Id                       = $getValue.id
@@ -237,7 +247,7 @@ function Set-TargetResource {
         $contentFilterSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenDockIcons,
 
         [Parameter()]
@@ -449,7 +459,7 @@ function Test-TargetResource {
         $contentFilterSettings,
 
         [Parameter()]
-        [System.String]
+        [Microsoft.Management.Infrastructure.CimInstance]
         $homeScreenDockIcons,
 
         [Parameter()]
@@ -707,6 +717,16 @@ function Export-TargetResource {
                 }
                 else {
                     $Results.Remove('contentFilterSettings') | Out-Null
+                }
+            }
+
+            if ($Results.homeScreenDockIcons) {
+                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.homeScreenDockIcons -CIMInstanceName HomeScreenDockIcons
+                if ($complexTypeStringResult) {
+                    $Results.homeScreenDockIcons = $complexTypeStringResult
+                }
+                else {
+                    $Results.Remove('homeScreenDockIcons') | Out-Null
                 }
             }
 
