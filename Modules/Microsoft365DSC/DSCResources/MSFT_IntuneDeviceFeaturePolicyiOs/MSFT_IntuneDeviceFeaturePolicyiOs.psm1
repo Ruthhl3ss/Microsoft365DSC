@@ -143,7 +143,7 @@ function Get-TargetResource {
 
         $contentFilterSettingscomplex = @{}
         if ($null -ne $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'){
-            $contentFilterSettingscomplex.Add('odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
+            $contentFilterSettingscomplex.Add('@odata.type', $getValue.AdditionalProperties.contentFilterSettings.'@odata.type'.toString())
         }
         $contentFilterSettingscomplex.Add('allowedUrls', $getValue.AdditionalProperties.contentFilterSettings.allowedUrls)
         $contentFilterSettingscomplex.Add('blockedUrls', $getValue.AdditionalProperties.contentFilterSettings.blockedUrls)
