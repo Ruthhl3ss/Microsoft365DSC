@@ -699,7 +699,7 @@ function Export-TargetResource {
                     $Results.Remove('airPrintDestinations') | Out-Null
                 }
             }
-            
+            <#
             If ($Results.contentFilterSettings) {
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.contentFilterSettings -CIMInstanceName ContentFilterSetting
                 if ($complexTypeStringResult) {
@@ -709,6 +709,7 @@ function Export-TargetResource {
                     $Results.Remove('contentFilterSettings') | Out-Null
                 }
             }
+                #>
         
 
             $currentDSCBlock = Get-M365DSCExportContentForResource -ResourceName $ResourceName `
