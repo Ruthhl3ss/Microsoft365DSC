@@ -58,6 +58,23 @@ class MSFT_MicrosoftGraphDeviceFeaturenotificationSettings
     [Write, Description("Shows a preview of recent app notifications. Select when to show the preview. The value you choose overrides the user configured value on the device")] String previewVisibility
 }
 
+[ClassVersion("1.0.0.0")]
+class MSFT_MicrosoftGraphDeviceFeaturewallpaperImage
+{
+    [Write, Description("Type of Image upload usually (jpg/png)")] String type
+    [Write, Description("Wallpaper value usually in Base64 format")] String value
+}
+
+[ClassVersion("1.0.0.0")]
+class MSFT_MicrosoftGraphDeviceFeatureiosSingleSignOnExtension
+{
+    [Write, Description("Choose the type of SSO app extension. ")] String @odata.type
+    [Write, Description("(Microsoft Entra ID only): Choose Yes if you're deploying the Microsoft Enterprise SSO plug-in to iOS/iPadOS devices configured for Microsoft Entra shared device mode featur")] Boolean enableSharedDeviceMode
+    [Write, Description("(Microsoft Entra ID, Kerberos): Enter the bundle IDs of any other apps that should get single sign-on through an extension on your devices")] String bundleIdAccessControlList
+    [Write, Description("(Microsoft Entra ID, Redirect, and Credential): Enter more extension-specific data to pass to the SSO app extension")] String configurations
+}
+
+
 [ClassVersion("1.0.0.0"), FriendlyName("IntuneDeviceFeaturePolicyiOs")]
 class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
 {
@@ -73,7 +90,7 @@ class MSFT_IntuneDeviceFeaturePolicyiOs : OMI_BaseResource
     [Write, Description("Add up to four (4) items for iPhones, and up to six (6) items for iPads (apps and folders combined) to the dock on the screen."), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturehomeScreenDockIcons")] String homeScreenDockIcons;
     [Write, Description("Use this feature to add apps. And, see how these apps look on pages, the dock, and within folders."), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturehomeScreenPages")] String homeScreenPages;
     [Write, Description("Specify notification settings for apps"), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturenotificationSettings")] String notificationSettings
-    [Write, Description("")] String wallpaperImage
+    [Write, Description("Speficy settings for the wallpaper image"), EmbeddedInstance("MSFT_MicrosoftGraphDeviceFeaturewallpaperImage")] String wallpaperImage
     [Write, Description("")] String iosSingleSignOnExtension
     [Write, Description("Represents the assignment to the Intune policy."), EmbeddedInstance("MSFT_DeviceManagementConfigurationPolicyAssignments")] String Assignments[];
     [Write, Description("Present ensures the policy exists, absent ensures it is removed."), ValueMap{"Present","Absent"}, Values{"Present","Absent"}] string Ensure;

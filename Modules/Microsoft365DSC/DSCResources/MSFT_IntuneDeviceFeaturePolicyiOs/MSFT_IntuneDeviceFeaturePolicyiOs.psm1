@@ -142,7 +142,7 @@ function Get-TargetResource {
 
 
         Write-Verbose -Message "Found something with id {$id}"
-        $results = [PSCustomObject]@{
+        $results = @{
             Id                       = $Policy.id
             DisplayName              = $Policy.DisplayName
             Description              = $Policy.Description
@@ -685,14 +685,11 @@ function Export-TargetResource {
             }
 
             If ($Results.airPrintDestinations) {
-                Write-Verbose -Message "Using Get-M365DSCDRGComplexTypeToString for airPrintDestinations"
                 $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject ([Array]$Results.airPrintDestinations) -CIMInstanceName AirPrintDestination
                 if ($complexTypeStringResult) {
-                    Write-Verbose -Message "Setting airPrintDestinations to $complexTypeStringResult"
                     $Results.airPrintDestinations = $complexTypeStringResult
                 }
                 else {
-                    Write-Verbose -Message "Setting airPrintDestinations to $null"
                     $Results.Remove('airPrintDestinations') | Out-Null
                 }
             }
@@ -754,16 +751,6 @@ function Export-TargetResource {
                 }
                 else {
                     $Results.Remove('iosSingleSignOnExtension') | Out-Null
-                }
-            }
-
-            If ($Results.iosSingleSignOnExtension.configurations){
-                $complexTypeStringResult = Get-M365DSCDRGComplexTypeToString -ComplexObject $Results.iosSingleSignOnExtension.configurations -CIMInstanceName iosSingleSignOnExtensionConfigurations
-                if ($complexTypeStringResult) {
-                    $Results.iosSingleSignOnExtension.configurations = $complexTypeStringResult
-                }
-                else {
-                    Write-Verbose -Message "Setting iosSingleSignOnExtension.configurations could not be converted to string"
                 }
             }
 
